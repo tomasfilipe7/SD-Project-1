@@ -9,7 +9,7 @@ package common_infrastructures;
 
 public enum EHostessState 
 {
-	WAIT_FOR_NEXT_FLIGHT,
+	WAIT_FOR_FLIGHT,
 	WAIT_FOR_PASSENGER,
 	CHECK_PASSENGER,
 	READY_TO_FLY

@@ -33,5 +33,10 @@ public class MemFIFO<R> extends MemObject<R>
 		
 		return val;
 	}
+	
+	public boolean isEmpty()
+	{
+		return empty;
+	}
 
 }
