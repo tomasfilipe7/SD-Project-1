@@ -12,11 +12,6 @@ import common_infrastructures.EPilotState;
  */
 public class DestAirport 
 {
-	public EPassengerState leaveThePlane(Plane plane)
-	{
-		// Implement leave the plane
-		return EPassengerState.AT_DESTINATION;
-	}
 	
 	public EPilotState announceArrival()
 	{
