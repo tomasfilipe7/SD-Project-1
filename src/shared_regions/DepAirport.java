@@ -33,18 +33,26 @@ public class DepAirport
 	{
 		return passengersQueue.isEmpty();
 	}
-	public synchronized boolean travelToAirport() throws MemException
-	{
-		// Implement travel to airport
-		Passenger passenger = (Passenger) Thread.currentThread();
-		passengersQueue.write(passenger);
-		return true;
-	}
 	
-	public EPassengerState waitInQueue()
+	public synchronized boolean waitInQueue()
 	{
 		// Implement wait in queue
-		return EPassengerState.IN_QUEUE;
+		Passenger p = (Passenger)Thread.currentThread();
+		try {
+			passengersQueue.write(p);
+		} catch (MemException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		p.setPassengerState(EPassengerState.IN_QUEUE);
+		try {
+			wait();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			return true;
+		}
+
+		return false;
 	}
 	
 	public void showDocuments()
@@ -52,10 +60,17 @@ public class DepAirport
 		// Implement show documents
 	}
 	
-	public EPassengerState boardThePlane()
+	public void boardThePlane()
 	{
-		// Implement board the plane
-		return EPassengerState.IN_FLIGHT;
+		// Implement travel to airport
+		Passenger p = (Passenger)Thread.currentThread();
+		try {
+			p.sleep((long)(1 + 10 * Math.random()));
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		p.setPassengerState(EPassengerState.IN_FLIGHT);
 	}
 
 	public EPilotState parkAtTransferGate()
@@ -82,7 +97,7 @@ public class DepAirport
 		return EHostessState.WAIT_FOR_PASSENGER;
 	}
 	
-	public EHostessState checkDocuments()
+	public synchronized EHostessState checkDocuments(int passengerId)
 	{
 		// Implement check documents
 		return EHostessState.CHECK_PASSENGER;

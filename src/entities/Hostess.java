@@ -16,11 +16,11 @@ import shared_regions.Plane;
  */
 public class Hostess extends Thread
 {
-	private EHostessState state;
+	private EHostessState hostessState;
 	
-	private DepAirport depAirport;
-	private DestAirport destAirport;
-	private Plane plane;
+	private final DepAirport depAirport;
+	private final DestAirport destAirport;
+	private final Plane plane;
 	
 	private boolean has_finished;
 	
@@ -31,9 +31,9 @@ public class Hostess extends Thread
 	 * @param destAirport
 	 * @param plane
 	 */
-	public Hostess(EHostessState state, DepAirport depAirport, DestAirport destAirport, Plane plane) {
+	public Hostess(EHostessState hostessState, DepAirport depAirport, DestAirport destAirport, Plane plane) {
 		super();
-		this.state = state;
+		this.hostessState = hostessState;
 		this.depAirport = depAirport;
 		this.destAirport = destAirport;
 		this.plane = plane;
@@ -46,28 +46,41 @@ public class Hostess extends Thread
 	{
 		while(!has_finished)
 		{
-			switch(state)
+			int currentPassenger = 0;
+			switch(hostessState)
 			{
 				case WAIT_FOR_FLIGHT:
-					state = depAirport.prepareForPassBoarding();
+					hostessState = depAirport.prepareForPassBoarding();
 					break;
 				case WAIT_FOR_PASSENGER:
 					if(plane.isFull() || (depAirport.QueueIsEmpty() && plane.isReady()))
 					{
-						state = depAirport.informPlaneReadyToTakeOff();
+						hostessState = depAirport.informPlaneReadyToTakeOff();
 					}
 					else if(!plane.isFull() && !depAirport.QueueIsEmpty())
 					{
-						state = depAirport.checkDocuments();
+						hostessState = depAirport.checkDocuments(currentPassenger);
 					}
 					break;
 				case CHECK_PASSENGER:
-					state = depAirport.waitForNextPassenger();
+					hostessState = depAirport.waitForNextPassenger();
 					break;
 				case READY_TO_FLY:
-					state = depAirport.waitForNextFlight(); 
+					hostessState = depAirport.waitForNextFlight(); 
 					break;
 			}
 		}
 	}
+
+
+	public EHostessState getHostessState() {
+		return hostessState;
+	}
+
+
+	public void setHostessState(EHostessState hostessState) {
+		this.hostessState = hostessState;
+	}
+	
+	
 }

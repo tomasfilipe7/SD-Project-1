@@ -14,11 +14,11 @@ import shared_regions.Plane;
  */
 public class Pilot extends Thread
 {
-	private EPilotState state;
+	private EPilotState pilotState;
 	
-	private DepAirport depAirport;
-	private DestAirport destAirport;
-	private Plane plane;
+	private final DepAirport depAirport;
+	private final DestAirport destAirport;
+	private final Plane plane;
 	
 	private boolean has_finished;
 	
@@ -28,9 +28,9 @@ public class Pilot extends Thread
 	 * @param destAirport
 	 * @param plane
 	 */
-	public Pilot(EPilotState state, DepAirport depAirport, DestAirport destAirport, Plane plane) {
+	public Pilot(EPilotState pilotState, DepAirport depAirport, DestAirport destAirport, Plane plane) {
 		super();
-		this.state = state;
+		this.pilotState = pilotState;
 		this.depAirport = depAirport;
 		this.destAirport = destAirport;
 		this.plane = plane;
@@ -42,31 +42,41 @@ public class Pilot extends Thread
 	{
 		while(!has_finished)
 		{
-			switch(state)
+			switch(pilotState)
 			{
 				case AT_TRANSFER_GATE:
-					state = depAirport.informPlaneReadyForBoarding();
+					pilotState = depAirport.informPlaneReadyForBoarding();
 					break;
 				case READY_FOR_BOARDING:
-					state = depAirport.waitForAllBoard();
+					pilotState = depAirport.waitForAllBoard();
 					break;
 				case WAITING_FOR_BOARDING:
-					state = plane.flyToDestinationPoint();
+					pilotState = plane.flyToDestinationPoint();
 					break;
 				case FLYING_FORWARD:
-					state = destAirport.announceArrival();
+					pilotState = destAirport.announceArrival();
 					break;
 				case DEBOARDING:
 					if(plane.isEmpty())
 					{
-						state = plane.flyToDeparturePoint();
+						pilotState = plane.flyToDeparturePoint();
 					}
 					break;
 				case FLYING_BACK:
-					state = depAirport.parkAtTransferGate();
+					pilotState = depAirport.parkAtTransferGate();
 					break;
 			}
 		}
 	}
+
+	public EPilotState getPilotState() {
+		return pilotState;
+	}
+
+	public void setPilotState(EPilotState pilotState) {
+		this.pilotState = pilotState;
+	}
+	
+	
 
 }

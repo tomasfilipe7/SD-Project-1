@@ -15,13 +15,33 @@ import shared_regions.Plane;
  */
 public class Passenger extends Thread
 {
-	private EPassengerState state;
-	private DepAirport depAirport;
-	private DestAirport destAirport;
-	private Plane plane;
-	
-	private boolean has_arrived_at_airport;
+	/**
+	 * Passenger Identification
+	 */
+	private int passengerId;
+	/**
+	 *  Current passenger state
+	 */
+	private EPassengerState passengerState;
+	/**
+	 * Reference to the departure airport
+	 */
+	private final DepAirport depAirport;
+	/**
+	 * Reference to the destination airport 
+	 */
+	private final DestAirport destAirport;
+	/**
+	 * Reference to the plane
+	 */
+	private final Plane plane;
+	/**
+	 * Condition to verify the life cycle of the passenger
+	 */
 	private boolean has_arrived_at_destination;
+	/**
+	 * Condition to check if the passenger documents were validated
+	 */
 	private boolean documents_validated;
 	
 	
@@ -33,65 +53,100 @@ public class Passenger extends Thread
 	 * @param plane
 	 * @param has_arrived
 	 */
-	public Passenger(EPassengerState state, DepAirport depAirport, DestAirport destAirport, Plane plane) {
+	public Passenger(EPassengerState passengerState, DepAirport depAirport, DestAirport destAirport, Plane plane) {
 		super();
-		this.state = state;
+		this.passengerState = passengerState;
 		this.depAirport = depAirport;
 		this.destAirport = destAirport;
 		this.plane = plane;
-		this.has_arrived_at_airport = false;
+//		this.has_arrived_at_airport = false;
 		this.has_arrived_at_destination = false;
 		this.documents_validated = false;
 	}
 	
-	public void validat_documents()
-	{
-		this.documents_validated = true;
-	}
+	/**
+	 * Life cycle of the Passenger
+	 */
 	@Override
 	public void run()
 	{
 		while(!has_arrived_at_destination)
 		{
-			switch(state)
+			switch(passengerState)
 			{
 				case GOING_TO_AIRPORT:
-					try {
-						depAirport.travelToAirport();
-					} catch (MemException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					if(has_arrived_at_airport)
+					travelToAirport();								// The passenger travels to the airport.
+					boolean waiting = depAirport.waitInQueue();		// The passenger arrives at the queue and starts waiting.
+					if(waiting)
 					{
-						state = depAirport.waitInQueue();
+						has_arrived_at_destination = true;			// End of passenger life cycle.
 					}
 					break;
 				case IN_QUEUE:
-					try {
-						if(depAirport.getNextPassenger() == this)
-						{
-							depAirport.showDocuments();
-						}
-					} catch (MemException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					if(documents_validated)
+					if(documents_validated)							// If passenger documents were validated, then he is ready to board the plane
 					{
-						state = depAirport.boardThePlane();
+						depAirport.boardThePlane();
+					}
+					else											// If the passenger documents were not validated, then he shows his documents
+					{
+						depAirport.showDocuments();
 					}
 					break;
 				case IN_FLIGHT:
-					if(plane.waitForEndOfFlight())
+					if(plane.waitForEndOfFlight())					// Passenger waits until the end of flight, and leaves the plane
 					{
-						state = destAirport.leaveThePlane();;
+						plane.leaveThePlane();
 					}
 					break;
 				case AT_DESTINATION:
-					this.has_arrived_at_destination = true;
+					this.has_arrived_at_destination = true;			// End of passenger's life cycle.
 					break;
 			}
 		}
 	}
+	
+	/**
+	 * Traveling to the airport
+	 * Internal operation
+	 */
+	public void travelToAirport()
+	{
+		// Implement travel to airport
+		try {
+			sleep((long)(1 + 10 * Math.random()));
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Get passenger state
+	 * @return passenger state
+	 */
+	public EPassengerState getPassengerState() {
+		return passengerState;
+	}
+	/**
+	 * Set the passenger state
+	 * @param passengerState
+	 */
+	public void setPassengerState(EPassengerState passengerState) {
+		this.passengerState = passengerState;
+	}
+	/**
+	 * Get the passenger identification
+	 * @return passenger identification
+	 */
+	public int getPassengerId() {
+		return passengerId;
+	}
+	/**
+	 * Set if the documents were validated
+	 * @param documents_validated
+	 */
+	public void setDocuments_validated(boolean documents_validated) {
+		this.documents_validated = documents_validated;
+	}
+	
 }

@@ -3,6 +3,7 @@
  */
 package shared_regions;
 
+import common_infrastructures.EPassengerState;
 import common_infrastructures.EPilotState;
 import common_infrastructures.MemException;
 import common_infrastructures.MemFIFO;
@@ -16,7 +17,7 @@ public class Plane
 {
 	private int max_passengers;
 	private int min_passengers;
-	private MemFIFO<Passenger> passengers_on_plane;
+	private Passenger[] passengers_on_plane;
 	private int currentPassengers;
 	
 	/**
@@ -27,21 +28,29 @@ public class Plane
 		super();
 		this.max_passengers = max_passengers;
 		this.min_passengers = min_passengers;
-		this.currentPassengers = this.max_passengers;
-		passengers_on_plane = new MemFIFO<Passenger>(this.max_passengers);
+		this.currentPassengers = 0;
+		passengers_on_plane = new Passenger[max_passengers];
 	}
 	
 	public void enterPassenger() throws MemException
 	{
 		Passenger passenger = (Passenger) Thread.currentThread();
-		passengers_on_plane.write(passenger);
+		passengers_on_plane[currentPassengers] = passenger;
 		currentPassengers += 1;
 	}
 	
+	/**
+	 * Check if plane is fool
+	 * @return true if the number of current passengers is greater or equal then max passengers
+	 */
 	public boolean isFull()
 	{
 		return currentPassengers >= max_passengers;
 	}
+	/**
+	 * Check if plane is ready to depart
+	 * @return true if the number of current passengers is greater or equal then minimum passengers
+	 */
 	public boolean isReady()
 	{
 		return currentPassengers >= min_passengers;
@@ -49,7 +58,7 @@ public class Plane
 	
 	public boolean isEmpty()
 	{
-		return passengers_on_plane.isEmpty();
+		return currentPassengers == 0;
 	}
 	public EPilotState flyToDestinationPoint()
 	{
@@ -66,6 +75,20 @@ public class Plane
 	public boolean waitForEndOfFlight()
 	{
 		// Implement wait for end of flight
+		try {
+			wait();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			return false;
+		}
 		return true;
+	}
+	
+	public void leaveThePlane()
+	{
+		// Implement leave the plane
+		passengers_on_plane[currentPassengers] = null;
+		currentPassengers -= 1;
+		((Passenger) Thread.currentThread()).setPassengerState(EPassengerState.AT_DESTINATION);;
 	}
 }
