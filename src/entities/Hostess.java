@@ -15,27 +15,37 @@ import shared_regions.Plane;
  *
  */
 public class Hostess extends Thread
-{
+{	
+	/**
+	 * Current hostess state
+	 */
 	private EHostessState hostessState;
 	
+	/**
+	 * Reference to the departure airport 
+	 */
 	private final DepAirport depAirport;
-	private final DestAirport destAirport;
+	
+	/**
+	 * Reference to the plane
+	 */
 	private final Plane plane;
 	
+	/**
+	 * Condition to verify the hostess life cycle
+	 */
 	private boolean has_finished;
 	
 
 	/**
 	 * @param state
 	 * @param depAirport
-	 * @param destAirport
 	 * @param plane
 	 */
-	public Hostess(EHostessState hostessState, DepAirport depAirport, DestAirport destAirport, Plane plane) {
+	public Hostess(EHostessState hostessState, DepAirport depAirport, Plane plane) {
 		super();
 		this.hostessState = hostessState;
 		this.depAirport = depAirport;
-		this.destAirport = destAirport;
 		this.plane = plane;
 		this.has_finished = false;
 	}
@@ -50,34 +60,40 @@ public class Hostess extends Thread
 			switch(hostessState)
 			{
 				case WAIT_FOR_FLIGHT:
-					hostessState = depAirport.prepareForPassBoarding();
+					depAirport.prepareForPassBoarding();
 					break;
 				case WAIT_FOR_PASSENGER:
 					if(plane.isFull() || (depAirport.QueueIsEmpty() && plane.isReady()))
 					{
-						hostessState = depAirport.informPlaneReadyToTakeOff();
+						depAirport.informPlaneReadyToTakeOff();
 					}
 					else if(!plane.isFull() && !depAirport.QueueIsEmpty())
 					{
-						hostessState = depAirport.checkDocuments(currentPassenger);
+						depAirport.checkDocuments(currentPassenger);
 					}
 					break;
 				case CHECK_PASSENGER:
-					hostessState = depAirport.waitForNextPassenger();
+					depAirport.waitForNextPassenger();
 					break;
 				case READY_TO_FLY:
-					hostessState = depAirport.waitForNextFlight(); 
+					depAirport.waitForNextFlight();
 					break;
 			}
 		}
 	}
 
-
+	/**
+	 * Get hostess state
+	 * @return hostess state
+	 */
 	public EHostessState getHostessState() {
 		return hostessState;
 	}
 
-
+	/**
+	 * Set hostess state
+	 * @param hostessState
+	 */
 	public void setHostessState(EHostessState hostessState) {
 		this.hostessState = hostessState;
 	}

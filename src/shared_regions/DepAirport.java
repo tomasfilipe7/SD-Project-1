@@ -9,6 +9,8 @@ import common_infrastructures.MemException;
 import common_infrastructures.MemFIFO;
 import entities.Passenger;
 import entities.Pilot;
+import entities.Hostess;
+
 /**
  * @author tomasfilipe7
  *
@@ -112,35 +114,61 @@ public class DepAirport
 		}
 	}
 	
-	public EHostessState prepareForPassBoarding()
+	public void prepareForPassBoarding()
 	{
-		// Implement prepare for pass boarding
-		return EHostessState.WAIT_FOR_PASSENGER;
+		Hostess h = (Hostess)Thread.currentThread();
+		h.setHostessState(EHostessState.WAIT_FOR_PASSENGER);
+		try {
+			h.wait();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
-	public synchronized EHostessState checkDocuments(int passengerId)
+	public synchronized void checkDocuments(int passengerId)
 	{
-		// Implement check documents
-		return EHostessState.CHECK_PASSENGER;
+		Hostess h = (Hostess)Thread.currentThread();
+		h.setHostessState(EHostessState.CHECK_PASSENGER);
+		notify();
+		try {
+			h.wait();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
-	public EHostessState waitForNextPassenger()
+	public void waitForNextPassenger()
 	{ 
-		// implement wait for next passenger 
-		return EHostessState.WAIT_FOR_PASSENGER;
+		notify();
+		Hostess h = (Hostess)Thread.currentThread();
+		h.setHostessState(EHostessState.WAIT_FOR_PASSENGER);
+		try {
+			h.wait();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
-	public EHostessState informPlaneReadyToTakeOff()
+	public void informPlaneReadyToTakeOff()
 	{
 		notifyAll();
-		// Implement inform plane ready to take off
-		return EHostessState.READY_TO_FLY;
+		Hostess h = (Hostess)Thread.currentThread();
+		h.setHostessState(EHostessState.READY_TO_FLY);
 	}
 	
-	public EHostessState waitForNextFlight()
+	public void waitForNextFlight()
 	{
-		// Implement wait for next flight
-		return EHostessState.WAIT_FOR_FLIGHT;
+		Hostess h = (Hostess)Thread.currentThread();
+		h.setHostessState(EHostessState.WAIT_FOR_FLIGHT);
+		try {
+			h.wait();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 }
