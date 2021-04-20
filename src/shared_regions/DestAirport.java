@@ -19,12 +19,6 @@ public class DestAirport
 		notifyAll();
 		Pilot p = (Pilot)Thread.currentThread();
 		p.setPilotState(EPilotState.DEBOARDING);
-		try {
-			p.wait();
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 	
 }
