@@ -4,9 +4,11 @@
 package entities;
 
 import common_infrastructures.EPilotState;
+import genclass.GenericIO;
 import shared_regions.DepAirport;
 import shared_regions.DestAirport;
 import shared_regions.Plane;
+
 
 /**
  * @author tomasfilipe7
@@ -15,11 +17,9 @@ import shared_regions.Plane;
 public class Pilot extends Thread
 {
 	private EPilotState pilotState;
-	
 	private final DepAirport depAirport;
 	private final DestAirport destAirport;
 	private final Plane plane;
-	
 	private boolean has_finished;
 	private boolean is_comming_back;
 	

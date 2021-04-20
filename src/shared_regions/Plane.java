@@ -20,6 +20,7 @@ public class Plane
 	private int min_passengers;
 	private Passenger[] passengers_on_plane;
 	private int currentPassengers;
+	private boolean has_arrived;
 	
 	/**
 	 * @param max_passengers
@@ -31,6 +32,7 @@ public class Plane
 		this.min_passengers = min_passengers;
 		this.currentPassengers = 0;
 		passengers_on_plane = new Passenger[max_passengers];
+		this.has_arrived = false;
 	}
 	
 	public void enterPassenger() throws MemException
@@ -75,6 +77,17 @@ public class Plane
 	
 	public void flyToDeparturePoint()
 	{
+		this.has_arrived = true;
+		while(currentPassengers > 0)
+		{
+			try {
+				wait();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
 		Pilot p = (Pilot)Thread.currentThread();
 		p.setPilotState(EPilotState.FLYING_BACK);
 		try {
@@ -88,12 +101,16 @@ public class Plane
 	public boolean waitForEndOfFlight()
 	{
 		// Implement wait for end of flight
-		try {
-			wait();
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			return false;
+		while(!this.has_arrived)
+		{
+			try {
+				wait();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				return false;
+			}
 		}
+			
 		return true;
 	}
 	

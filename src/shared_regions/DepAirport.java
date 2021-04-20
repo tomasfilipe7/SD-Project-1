@@ -20,11 +20,28 @@ public class DepAirport
 	private MemFIFO<Passenger> passengersQueue;
 	
 	/**
+	 * Passengers waiting to be called by hostess
+	 */
+	private boolean waiting_for_call;
+	/**
+	 * Hostess waiting to check documents;
+	 */
+	private boolean checking_documents;
+	private boolean ready_to_takeoff;
+	/**
+	 * If the plane is at the airport
+	 */
+	private boolean plane_has_arrived;
+	/**
 	 * @param passengersQueue
 	 */
 	public DepAirport(int passengersQueueMax) {
 		super();
 		this.passengersQueue = new MemFIFO<Passenger>(passengersQueueMax);
+		this.waiting_for_call = true;
+		this.checking_documents = true;
+		this.plane_has_arrived = false;
+		this.ready_to_takeoff = false;
 	}
 	
 	public Passenger getNextPassenger() throws MemException
@@ -48,11 +65,16 @@ public class DepAirport
 			e1.printStackTrace();
 		}
 		p.setPassengerState(EPassengerState.IN_QUEUE);
-		try {
-			wait();
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		notifyAll();
+		while(this.waiting_for_call)
+		{
+			try {
+				wait();
+				
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 	
@@ -60,14 +82,15 @@ public class DepAirport
 	{
 		// Implement show documents
 		Passenger p = (Passenger)Thread.currentThread();
-		p.notify();
-		try {
-			p.wait();
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		p.setDocuments_validated(true);
+		notifyAll();
+		this.checking_documents = true;
+		while(!p.getDocuments_validated())
+			try {
+				wait();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 	}
 	
 	public void boardThePlane()
@@ -75,7 +98,7 @@ public class DepAirport
 		// Implement travel to airport
 		Passenger p = (Passenger)Thread.currentThread();
 		try {
-			p.sleep((long)(1 + 10 * Math.random()));
+			Passenger.sleep((long)(1 + 10 * Math.random()));
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -98,6 +121,7 @@ public class DepAirport
 	public void informPlaneReadyForBoarding()
 	{
 		notifyAll();
+		this.plane_has_arrived = true;
 		Pilot p = (Pilot)Thread.currentThread();
 		p.setPilotState(EPilotState.READY_FOR_BOARDING);
 	}
@@ -106,55 +130,79 @@ public class DepAirport
 	{
 		Pilot p = (Pilot)Thread.currentThread();
 		p.setPilotState(EPilotState.WAITING_FOR_BOARDING);
-		try {
-			p.wait();
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		while(!this.ready_to_takeoff)
+		{
+			try {
+				wait();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
+		this.ready_to_takeoff = false;
 	}
 	
 	public void prepareForPassBoarding()
 	{
 		Hostess h = (Hostess)Thread.currentThread();
 		h.setHostessState(EHostessState.WAIT_FOR_PASSENGER);
-		try {
-			h.wait();
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		while(!plane_has_arrived)
+			try {
+				wait();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 	}
 	
 	public synchronized void checkDocuments(int passengerId)
 	{
 		Hostess h = (Hostess)Thread.currentThread();
-		h.setHostessState(EHostessState.CHECK_PASSENGER);
-		notify();
+		h.setHostessState(EHostessState.CHECK_PASSENGER);	
+		notifyAll();
+		this.waiting_for_call = false;
+		while(this.checking_documents)
+		{
+			try {
+				wait();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		Passenger p;
 		try {
-			h.wait();
-		} catch (InterruptedException e) {
+			p = passengersQueue.read();
+			p.setDocuments_validated(true);
+		} catch (MemException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
 	}
 	
 	public void waitForNextPassenger()
 	{ 
-		notify();
 		Hostess h = (Hostess)Thread.currentThread();
 		h.setHostessState(EHostessState.WAIT_FOR_PASSENGER);
-		try {
-			h.wait();
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		notifyAll();
+		this.waiting_for_call = true;
+		while(this.QueueIsEmpty())
+		{
+			try {
+				wait();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 	
 	public void informPlaneReadyToTakeOff()
 	{
 		notifyAll();
+		this.plane_has_arrived = false;
+		this.ready_to_takeoff = true;
 		Hostess h = (Hostess)Thread.currentThread();
 		h.setHostessState(EHostessState.READY_TO_FLY);
 	}
@@ -163,12 +211,16 @@ public class DepAirport
 	{
 		Hostess h = (Hostess)Thread.currentThread();
 		h.setHostessState(EHostessState.WAIT_FOR_FLIGHT);
-		try {
-			h.wait();
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		while(!this.plane_has_arrived)
+		{
+			try {
+				wait();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
+			
 	}
 	
 }

@@ -145,5 +145,10 @@ public class Passenger extends Thread
 	public void setDocuments_validated(boolean documents_validated) {
 		this.documents_validated = documents_validated;
 	}
+	public boolean getDocuments_validated()
+	{
+		return this.documents_validated;
+	}
+	
 	
 }
