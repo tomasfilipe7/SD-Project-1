@@ -8,6 +8,7 @@ import common_infrastructures.EPilotState;
 import common_infrastructures.MemException;
 import common_infrastructures.MemFIFO;
 import entities.Passenger;
+import entities.Pilot;
 
 /**
  * @author tomasfilipe7
@@ -60,16 +61,28 @@ public class Plane
 	{
 		return currentPassengers == 0;
 	}
-	public EPilotState flyToDestinationPoint()
+	public void flyToDestinationPoint()
 	{
-		// Implement fly to destination point
-		return EPilotState.FLYING_FORWARD;
+		Pilot p = (Pilot)Thread.currentThread();
+		p.setPilotState(EPilotState.FLYING_FORWARD);
+		try {
+			Pilot.sleep((long)(1 + 10 * Math.random()));
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
-	public EPilotState flyToDeparturePoint()
+	public void flyToDeparturePoint()
 	{
-		// Implement fly to departure point
-		return EPilotState.AT_TRANSFER_GATE;
+		Pilot p = (Pilot)Thread.currentThread();
+		p.setPilotState(EPilotState.FLYING_BACK);
+		try {
+			Pilot.sleep((long)(1 + 10 * Math.random()));
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	public boolean waitForEndOfFlight()
@@ -87,8 +100,18 @@ public class Plane
 	public void leaveThePlane()
 	{
 		// Implement leave the plane
+		try {
+			Passenger.sleep((long)(1 + 10 * Math.random()));
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		passengers_on_plane[currentPassengers] = null;
 		currentPassengers -= 1;
+		if(currentPassengers <= 0)
+		{
+			notifyAll();
+		}
 		((Passenger) Thread.currentThread()).setPassengerState(EPassengerState.AT_DESTINATION);;
 	}
 }

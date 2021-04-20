@@ -51,19 +51,20 @@ public class Pilot extends Thread
 					pilotState = depAirport.waitForAllBoard();
 					break;
 				case WAITING_FOR_BOARDING:
-					pilotState = plane.flyToDestinationPoint();
+					plane.flyToDestinationPoint();
 					break;
 				case FLYING_FORWARD:
-					pilotState = destAirport.announceArrival();
+					destAirport.announceArrival();
 					break;
 				case DEBOARDING:
-					if(plane.isEmpty())
-					{
-						pilotState = plane.flyToDeparturePoint();
-					}
+						plane.flyToDeparturePoint();
 					break;
 				case FLYING_BACK:
-					pilotState = depAirport.parkAtTransferGate();
+					depAirport.parkAtTransferGate();
+					if(depAirport.QueueIsEmpty())
+					{
+						has_finished = true;
+					}
 					break;
 			}
 		}

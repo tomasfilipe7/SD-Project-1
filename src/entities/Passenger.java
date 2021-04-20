@@ -53,8 +53,9 @@ public class Passenger extends Thread
 	 * @param plane
 	 * @param has_arrived
 	 */
-	public Passenger(EPassengerState passengerState, DepAirport depAirport, DestAirport destAirport, Plane plane) {
+	public Passenger(int passengerId, EPassengerState passengerState, DepAirport depAirport, DestAirport destAirport, Plane plane) {
 		super();
+		this.passengerId = passengerId;
 		this.passengerState = passengerState;
 		this.depAirport = depAirport;
 		this.destAirport = destAirport;

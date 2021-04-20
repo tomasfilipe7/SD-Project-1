@@ -5,6 +5,7 @@ package shared_regions;
 
 import common_infrastructures.EPassengerState;
 import common_infrastructures.EPilotState;
+import entities.Pilot;
 
 /**
  * @author tomasfilipe7
@@ -13,10 +14,17 @@ import common_infrastructures.EPilotState;
 public class DestAirport 
 {
 	
-	public EPilotState announceArrival()
+	public void announceArrival()
 	{
-		// Implement announce arrival
-		return EPilotState.DEBOARDING;
+		notifyAll();
+		Pilot p = (Pilot)Thread.currentThread();
+		p.setPilotState(EPilotState.DEBOARDING);
+		try {
+			p.wait();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 }
