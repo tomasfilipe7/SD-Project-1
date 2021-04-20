@@ -77,11 +77,7 @@ public class Passenger extends Thread
 			{
 				case GOING_TO_AIRPORT:
 					travelToAirport();								// The passenger travels to the airport.
-					boolean waiting = depAirport.waitInQueue();		// The passenger arrives at the queue and starts waiting.
-					if(waiting)
-					{
-						has_arrived_at_destination = true;			// End of passenger life cycle.
-					}
+					depAirport.waitInQueue();		// The passenger arrives at the queue and starts waiting.
 					break;
 				case IN_QUEUE:
 					if(documents_validated)							// If passenger documents were validated, then he is ready to board the plane

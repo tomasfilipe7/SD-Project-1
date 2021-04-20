@@ -21,6 +21,7 @@ public class Pilot extends Thread
 	private final Plane plane;
 	
 	private boolean has_finished;
+	private boolean is_comming_back;
 	
 	/**
 	 * @param state
@@ -35,6 +36,7 @@ public class Pilot extends Thread
 		this.destAirport = destAirport;
 		this.plane = plane;
 		this.has_finished = false;
+		this.is_comming_back = false;
 	}
 
 	@Override
@@ -45,10 +47,15 @@ public class Pilot extends Thread
 			switch(pilotState)
 			{
 				case AT_TRANSFER_GATE:
-					pilotState = depAirport.informPlaneReadyForBoarding();
+					if(is_comming_back && depAirport.QueueIsEmpty())
+					{
+						has_finished = true;
+						break;
+					}
+					depAirport.informPlaneReadyForBoarding();
 					break;
 				case READY_FOR_BOARDING:
-					pilotState = depAirport.waitForAllBoard();
+					depAirport.waitForAllBoard();
 					break;
 				case WAITING_FOR_BOARDING:
 					plane.flyToDestinationPoint();
@@ -57,14 +64,11 @@ public class Pilot extends Thread
 					destAirport.announceArrival();
 					break;
 				case DEBOARDING:
-						plane.flyToDeparturePoint();
+					plane.flyToDeparturePoint();
 					break;
 				case FLYING_BACK:
 					depAirport.parkAtTransferGate();
-					if(depAirport.QueueIsEmpty())
-					{
-						has_finished = true;
-					}
+					is_comming_back = true;
 					break;
 			}
 		}

@@ -8,6 +8,7 @@ import common_infrastructures.EPilotState;
 import common_infrastructures.MemException;
 import common_infrastructures.MemFIFO;
 import entities.Passenger;
+import entities.Pilot;
 /**
  * @author tomasfilipe7
  *
@@ -34,7 +35,7 @@ public class DepAirport
 		return passengersQueue.isEmpty();
 	}
 	
-	public synchronized boolean waitInQueue()
+	public synchronized void waitInQueue()
 	{
 		// Implement wait in queue
 		Passenger p = (Passenger)Thread.currentThread();
@@ -49,15 +50,22 @@ public class DepAirport
 			wait();
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
-			return true;
+			e.printStackTrace();
 		}
-
-		return false;
 	}
 	
 	public void showDocuments()
 	{
 		// Implement show documents
+		Passenger p = (Passenger)Thread.currentThread();
+		p.notify();
+		try {
+			p.wait();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		p.setDocuments_validated(true);
 	}
 	
 	public void boardThePlane()
@@ -73,22 +81,35 @@ public class DepAirport
 		p.setPassengerState(EPassengerState.IN_FLIGHT);
 	}
 
-	public EPilotState parkAtTransferGate()
+	public void parkAtTransferGate()
 	{
-		// Implement park at transfer gate
-		return EPilotState.AT_TRANSFER_GATE;
+		Pilot p = (Pilot)Thread.currentThread();
+		p.setPilotState(EPilotState.AT_TRANSFER_GATE);
+		try {
+			Pilot.sleep((long)(1 + 10 * Math.random()));
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}		
 	}
 	
-	public EPilotState informPlaneReadyForBoarding()
+	public void informPlaneReadyForBoarding()
 	{
-		// Implement inform plane ready for Boarding
-		return EPilotState.READY_FOR_BOARDING;
+		notifyAll();
+		Pilot p = (Pilot)Thread.currentThread();
+		p.setPilotState(EPilotState.READY_FOR_BOARDING);
 	}
 	
-	public EPilotState waitForAllBoard()
+	public void waitForAllBoard()
 	{
-		// Implement wait for all board
-		return EPilotState.WAITING_FOR_BOARDING;
+		Pilot p = (Pilot)Thread.currentThread();
+		p.setPilotState(EPilotState.WAITING_FOR_BOARDING);
+		try {
+			p.wait();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	public EHostessState prepareForPassBoarding()
@@ -111,6 +132,7 @@ public class DepAirport
 	
 	public EHostessState informPlaneReadyToTakeOff()
 	{
+		notifyAll();
 		// Implement inform plane ready to take off
 		return EHostessState.READY_TO_FLY;
 	}
