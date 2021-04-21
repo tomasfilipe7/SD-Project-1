@@ -6,6 +6,7 @@ package entities;
 import java.lang.Thread.State;
 
 import common_infrastructures.EHostessState;
+import genclass.GenericIO;
 import shared_regions.DepAirport;
 import shared_regions.DestAirport;
 import shared_regions.Plane;
@@ -56,26 +57,29 @@ public class Hostess extends Thread
 	{
 		while(!has_finished)
 		{
-			int currentPassenger = 0;
 			switch(hostessState)
 			{
 				case WAIT_FOR_FLIGHT:
+					GenericIO.writelnString("Hostess WAIT_FOR_FLIGHT");
 					depAirport.prepareForPassBoarding();
 					break;
 				case WAIT_FOR_PASSENGER:
+					GenericIO.writelnString("Hostess WAIT_FOR_PASSENGER");
 					if(plane.isFull() || (depAirport.QueueIsEmpty() && plane.isReady()))
 					{
 						depAirport.informPlaneReadyToTakeOff();
 					}
 					else if(!plane.isFull() && !depAirport.QueueIsEmpty())
 					{
-						depAirport.checkDocuments(currentPassenger);
+						depAirport.checkDocuments();
 					}
 					break;
 				case CHECK_PASSENGER:
+					GenericIO.writelnString("Hostess CHECK_PASSENGER");
 					depAirport.waitForNextPassenger();
 					break;
 				case READY_TO_FLY:
+					GenericIO.writelnString("Hostess READY_TO_FLY");
 					depAirport.waitForNextFlight();
 					break;
 			}

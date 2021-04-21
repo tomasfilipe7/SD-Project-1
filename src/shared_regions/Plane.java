@@ -9,6 +9,7 @@ import common_infrastructures.MemException;
 import common_infrastructures.MemFIFO;
 import entities.Passenger;
 import entities.Pilot;
+import genclass.GenericIO;
 
 /**
  * @author tomasfilipe7
@@ -39,13 +40,14 @@ public class Plane
 	
 	public void enterPassenger() throws MemException
 	{
+		GenericIO.writelnString("Entering passenger...");
 		Passenger passenger = (Passenger) Thread.currentThread();
 		passengers_on_plane[currentPassengers] = passenger;
 		currentPassengers += 1;
 	}
 	
 	/**
-	 * Check if plane is fool
+	 * Check if plane is full
 	 * @return true if the number of current passengers is greater or equal then max passengers
 	 */
 	public boolean isFull()
@@ -65,8 +67,10 @@ public class Plane
 	{
 		return currentPassengers == 0;
 	}
+	
 	public void flyToDestinationPoint()
 	{
+		GenericIO.writelnString("Flying to destination point...");
 		Pilot p = (Pilot)Thread.currentThread();
 		p.setPilotState(EPilotState.FLYING_FORWARD);
 		try {
@@ -80,6 +84,7 @@ public class Plane
 	public void flyToDeparturePoint()
 	{
 		this.has_arrived = true;
+		GenericIO.writelnString("Waiting for passengers to leave the plane...");
 		while(currentPassengers > 0)
 		{
 			try {
@@ -89,6 +94,8 @@ public class Plane
 				e.printStackTrace();
 			}
 		}
+		
+		GenericIO.writelnString("All passengers out. Flying to departure point...");
 		
 		Pilot p = (Pilot)Thread.currentThread();
 		p.setPilotState(EPilotState.FLYING_BACK);
@@ -103,6 +110,7 @@ public class Plane
 	public boolean waitForEndOfFlight()
 	{
 		// Implement wait for end of flight
+		GenericIO.writelnString("Waiting for the end of flight...");
 		while(!this.has_arrived)
 		{
 			try {
@@ -112,6 +120,8 @@ public class Plane
 				return false;
 			}
 		}
+		
+		GenericIO.writelnString("Flight finished...");
 			
 		return true;
 	}
@@ -125,11 +135,13 @@ public class Plane
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		GenericIO.writelnString("Passengers leaving the plane...");
 		passengers_on_plane[currentPassengers] = null;
 		currentPassengers -= 1;
 		if(currentPassengers <= 0)
 		{
 			notifyAll();
+			GenericIO.writelnString("No more passengers here...");
 		}
 		((Passenger) Thread.currentThread()).setPassengerState(EPassengerState.AT_DESTINATION);;
 	}
