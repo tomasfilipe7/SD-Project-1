@@ -135,7 +135,7 @@ public class DepAirport
 	public synchronized void informPlaneReadyForBoarding()
 	{
 		notifyAll();
-		GenericIO.writelnString("informPlaneReadyForBoarding (Hostess)");
+		GenericIO.writelnString("informPlaneReadyForBoarding (Pilot)");
 		this.plane_has_arrived = true;
 		Pilot p = (Pilot)Thread.currentThread();
 		p.setPilotState(EPilotState.READY_FOR_BOARDING);
