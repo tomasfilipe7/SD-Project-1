@@ -69,8 +69,6 @@ public class DepAirport
 			e1.printStackTrace();
 		}
 		GenericIO.writelnString("Waiting in Queue (Passenger)");
-		p.setPassengerState(EPassengerState.IN_QUEUE);
-		repos.setPassengerState(p.getPassengerId(), EPassengerState.IN_QUEUE);
 		notifyAll();
 		while(this.waiting_for_call)
 		{
@@ -83,6 +81,8 @@ public class DepAirport
 				e.printStackTrace();
 			}
 		}
+		p.setPassengerState(EPassengerState.IN_QUEUE);
+		repos.setPassengerState(p.getPassengerId(), EPassengerState.IN_QUEUE);
 		GenericIO.writelnString("Waiting in Queue After wait (Passenger)");
 	}
 	
@@ -144,7 +144,7 @@ public class DepAirport
 		this.plane_has_arrived = true;
 		Pilot p = (Pilot)Thread.currentThread();
 		p.setPilotState(EPilotState.READY_FOR_BOARDING);
-		p.setPilotState(EPilotState.READY_FOR_BOARDING);
+		repos.setPilotState(EPilotState.READY_FOR_BOARDING);
 	}
 	
 	public synchronized void waitForAllBoard()
@@ -181,6 +181,7 @@ public class DepAirport
 				e.printStackTrace();
 			}
 		}
+		repos.reportStatus("boarding started.");
 		GenericIO.writelnString("Prepare for pass boarding After Wait (Hostess)");
 		h.setHostessState(EHostessState.WAIT_FOR_PASSENGER);
 		repos.setHostessState(EHostessState.WAIT_FOR_PASSENGER);
@@ -210,6 +211,7 @@ public class DepAirport
 			p = passengersQueue.read();
 			p.setDocuments_validated(true);
 			notifyAll();
+			repos.reportStatus("passenger " + p.getPassengerId() + " checked.");
 		} catch (MemException e) {
 			// TODO Auto-generated catch block
 			GenericIO.writelnString("Catching error validating documents");

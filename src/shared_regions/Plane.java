@@ -73,6 +73,7 @@ public class Plane
 	{
 		GenericIO.writelnString("Flying to destination point...");
 		Pilot p = (Pilot)Thread.currentThread();
+		repos.reportStatus("departed with " + this.currentPassengers + " passengers.");
 		p.setPilotState(EPilotState.FLYING_FORWARD);
 		repos.setPilotState(EPilotState.FLYING_FORWARD);
 		try {
@@ -86,6 +87,7 @@ public class Plane
 	
 	public synchronized void flyToDeparturePoint()
 	{
+		repos.reportStatus(" returning.");
 		this.has_arrived = true;
 		GenericIO.writelnString("Waiting for passengers to leave the plane...");
 		while(currentPassengers > 0)

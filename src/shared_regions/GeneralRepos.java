@@ -92,8 +92,6 @@ public class GeneralRepos {
 		reportStatus();
 	}
 	
-	
-	
 	/**
 	 * Write the header to the logging file.
 	 * 
@@ -106,7 +104,7 @@ public class GeneralRepos {
 			System.exit(1);
 		}
 		log.writelnString("             Airlift");
-		log.writelnString("Passenger 1 Passenger 2 Passenger 3 Passenger 4 ...");
+		log.writelnString("PT    HT    P00   P01   P02   P03   P04   P05   P06   P07   P08   P09   P10   P11   P12   P13   P14   P15   P16   P17   P18   P19   P20   InQ   InF   PTAL");
 		
 		if(!log.close()) {
 			GenericIO.writelnString("The operation of closing the file " + fileName + " failed!");
@@ -114,6 +112,21 @@ public class GeneralRepos {
 		}
 		
 		reportStatus();
+		log.writelnString();
+	}
+	
+	public void reportStatus(String condition)
+	{
+		TextFile log = new TextFile();
+		String lineStatus = "";
+		
+		if(!log.openForAppending(".", fileName)) {
+			GenericIO.writelnString("The operation of opening for appending the file" + fileName + " failed!");
+			System.exit(1);
+		}
+		
+		lineStatus += "Flight x: " + condition;
+		log.writelnString(lineStatus);
 	}
 	
 	/**
@@ -129,61 +142,60 @@ public class GeneralRepos {
 			System.exit(1);
 		}
 		
-		switch(hostessState) {
-			case WAIT_FOR_FLIGHT:
-				lineStatus += "WAIT_FOR_FLIGHT";
+		switch(pilotState) {
+			case AT_TRANSFER_GATE:
+				lineStatus += "ATRG  ";
 				break;
-			case WAIT_FOR_PASSENGER:
-				lineStatus += "WAIT_FOR_PASSENGER";
+			case READY_FOR_BOARDING:
+				lineStatus += "RDFB  ";
 				break;
-			case CHECK_PASSENGER:
-				lineStatus += "CHECK_PASSENGER";
+			case WAITING_FOR_BOARDING:
+				lineStatus += "WTFB  ";
 				break;
-			case READY_TO_FLY:
-				lineStatus += "READY_TO_FLY";
+			case FLYING_FORWARD:
+				lineStatus += "FLFW  ";
+				break;
+			case DEBOARDING:
+				lineStatus += "DRPP  ";
+				break;
+			case FLYING_BACK:
+				lineStatus += "FLBK  ";
 				break;
 		}
 		
-		switch(pilotState) {
-			case AT_TRANSFER_GATE:
-				lineStatus += "AT_TRANSFER_GATE";
-				break;
-			case READY_FOR_BOARDING:
-				lineStatus += "READY_FOR_BOARDING";
-				break;
-			case WAITING_FOR_BOARDING:
-				lineStatus += "WAITING_FOR_BOARDING";
-				break;
-			case FLYING_FORWARD:
-				lineStatus += "FLYING_FORWARD";
-				break;
-			case DEBOARDING:
-				lineStatus += "DEBOARDING";
-				break;
-			case FLYING_BACK:
-				lineStatus += "FLYING_BACK";
-				break;
-		}
+		switch(hostessState) {
+		case WAIT_FOR_FLIGHT:
+			lineStatus += "WTFL  ";
+			break;
+		case WAIT_FOR_PASSENGER:
+			lineStatus += "WTPS  ";
+			break;
+		case CHECK_PASSENGER:
+			lineStatus += "CKPS  ";
+			break;
+		case READY_TO_FLY:
+			lineStatus += "RDTF  ";
+			break;
+	}
 		
 		for(int i = 0; i < SimulParams.P; i++) {
 			switch(passengerState[i]) {
 				case GOING_TO_AIRPORT:
-					lineStatus += "GOING_TO_AIRPORT";
+					lineStatus += "GTAP  ";
 					break;
 				case IN_QUEUE:
-					lineStatus += "IN_QUEUE";
+					lineStatus += "INQE  ";
 					break;
 				case IN_FLIGHT:
-					lineStatus += "IN_FLIGHT";
+					lineStatus += "INFL  ";
 					break;
 				case AT_DESTINATION:
-					lineStatus += "AT_DESTINATION";
+					lineStatus += "ATDS";
 					break;
 			}
 		}
 		
 		log.writelnString(lineStatus);
-		
 		if(!log.close()) {
 			GenericIO.writelnString("The operation of closing the file " + fileName + " failed");
 			System.exit(1);
