@@ -74,6 +74,7 @@ public class Plane
 		GenericIO.writelnString("Flying to destination point...");
 		Pilot p = (Pilot)Thread.currentThread();
 		p.setPilotState(EPilotState.FLYING_FORWARD);
+		repos.setPilotState(EPilotState.FLYING_FORWARD);
 		try {
 			Pilot.sleep((long)(1 + 10 * Math.random()));
 		} catch (InterruptedException e) {
@@ -102,6 +103,7 @@ public class Plane
 		
 		Pilot p = (Pilot)Thread.currentThread();
 		p.setPilotState(EPilotState.FLYING_BACK);
+		repos.setPilotState(EPilotState.FLYING_BACK);
 		try {
 			Pilot.sleep((long)(1 + 10 * Math.random()));
 		} catch (InterruptedException e) {
@@ -149,6 +151,8 @@ public class Plane
 			notifyAll();
 			GenericIO.writelnString("No more passengers here...");
 		}
-		((Passenger) Thread.currentThread()).setPassengerState(EPassengerState.AT_DESTINATION);;
+		Passenger p = (Passenger) Thread.currentThread();
+		p.setPassengerState(EPassengerState.AT_DESTINATION);
+		repos.setPassengerState(p.getPassengerId(), EPassengerState.AT_DESTINATION);
 	}
 }
