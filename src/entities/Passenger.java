@@ -5,6 +5,7 @@ package entities;
 
 import common_infrastructures.EPassengerState;
 import common_infrastructures.MemException;
+import genclass.GenericIO;
 import shared_regions.DepAirport;
 import shared_regions.DestAirport;
 import shared_regions.Plane;
@@ -76,26 +77,33 @@ public class Passenger extends Thread
 			switch(passengerState)
 			{
 				case GOING_TO_AIRPORT:
+					GenericIO.writelnString("Going to airport");
 					travelToAirport();								// The passenger travels to the airport.
 					depAirport.waitInQueue();		// The passenger arrives at the queue and starts waiting.
 					break;
 				case IN_QUEUE:
+					GenericIO.writelnString("In Queue");
 					if(documents_validated)							// If passenger documents were validated, then he is ready to board the plane
 					{
+						GenericIO.writelnString("Documents validated");
 						depAirport.boardThePlane();
 					}
 					else											// If the passenger documents were not validated, then he shows his documents
 					{
+						GenericIO.writelnString("Showing documents");
 						depAirport.showDocuments();
 					}
 					break;
 				case IN_FLIGHT:
+					GenericIO.writelnString("In Flight");
 					if(plane.waitForEndOfFlight())					// Passenger waits until the end of flight, and leaves the plane
 					{
+						GenericIO.writelnString("FLight ended");
 						plane.leaveThePlane();
 					}
 					break;
 				case AT_DESTINATION:
+					GenericIO.writelnString("Arrived at destination");
 					this.has_arrived_at_destination = true;			// End of passenger's life cycle.
 					break;
 			}

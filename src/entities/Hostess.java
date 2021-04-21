@@ -56,7 +56,6 @@ public class Hostess extends Thread
 	{
 		while(!has_finished)
 		{
-			int currentPassenger = 0;
 			switch(hostessState)
 			{
 				case WAIT_FOR_FLIGHT:
@@ -69,7 +68,7 @@ public class Hostess extends Thread
 					}
 					else if(!plane.isFull() && !depAirport.QueueIsEmpty())
 					{
-						depAirport.checkDocuments(currentPassenger);
+						depAirport.checkDocuments();
 					}
 					break;
 				case CHECK_PASSENGER:

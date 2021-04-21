@@ -6,6 +6,7 @@ package shared_regions;
 import common_infrastructures.EPassengerState;
 import common_infrastructures.EPilotState;
 import entities.Pilot;
+import genclass.GenericIO;
 
 /**
  * @author tomasfilipe7
@@ -25,6 +26,7 @@ public class DestAirport
 
 	public void announceArrival()
 	{
+		GenericIO.writelnString("We have arrived");
 		notifyAll();
 		Pilot p = (Pilot)Thread.currentThread();
 		p.setPilotState(EPilotState.DEBOARDING);
