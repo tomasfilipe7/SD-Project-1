@@ -65,6 +65,7 @@ public class DepAirport
 			passengersQueue.write(p);
 		} catch (MemException e1) {
 			// TODO Auto-generated catch block
+			GenericIO.writelnString("Catching writing on queue");
 			e1.printStackTrace();
 		}
 		GenericIO.writelnString("Waiting in Queue");
@@ -77,6 +78,7 @@ public class DepAirport
 				
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
+				GenericIO.writelnString("Catching waiting for call");
 				e.printStackTrace();
 			}
 		}
@@ -96,6 +98,7 @@ public class DepAirport
 				wait();
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
+				GenericIO.writelnString("Catching error getting documents validated");
 				e.printStackTrace();
 			}
 		}
@@ -111,6 +114,7 @@ public class DepAirport
 			Passenger.sleep((long)(1 + 10 * Math.random()));
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
+			GenericIO.writelnString("Catching error boarding plane");
 			e.printStackTrace();
 		}
 		GenericIO.writelnString("Plane boarded");
@@ -125,6 +129,7 @@ public class DepAirport
 			Pilot.sleep((long)(1 + 10 * Math.random()));
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
+			GenericIO.writelnString("Catching error parking at transfer gate");
 			e.printStackTrace();
 		}
 		GenericIO.writelnString("Plane parked");
@@ -150,6 +155,7 @@ public class DepAirport
 				wait();
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
+				GenericIO.writelnString("Catching error waiting for all aboard");
 				e.printStackTrace();
 			}
 		}
@@ -167,6 +173,7 @@ public class DepAirport
 				wait();
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
+				GenericIO.writelnString("Catched prepare for passboarding error");
 				e.printStackTrace();
 			}
 		}
@@ -187,6 +194,7 @@ public class DepAirport
 				wait();
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
+				GenericIO.writelnString("Catching error checking documents");
 				e.printStackTrace();
 			}
 		}
@@ -198,6 +206,7 @@ public class DepAirport
 			notifyAll();
 		} catch (MemException e) {
 			// TODO Auto-generated catch block
+			GenericIO.writelnString("Catching error validating documents");
 			e.printStackTrace();
 		}
 		GenericIO.writelnString("Documents checked");
@@ -216,6 +225,7 @@ public class DepAirport
 				wait();
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
+				GenericIO.writelnString("Catching error waiting for next passenger");
 				e.printStackTrace();
 			}
 		}
