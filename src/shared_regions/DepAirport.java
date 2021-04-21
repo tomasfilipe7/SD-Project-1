@@ -70,6 +70,7 @@ public class DepAirport
 		}
 		GenericIO.writelnString("Waiting in Queue (Passenger)");
 		p.setPassengerState(EPassengerState.IN_QUEUE);
+		repos.setPassengerState(p.getPassengerId(), EPassengerState.IN_QUEUE);
 		notifyAll();
 		while(this.waiting_for_call)
 		{
@@ -90,7 +91,7 @@ public class DepAirport
 		// Implement show documents
 		Passenger p = (Passenger)Thread.currentThread();
 		notifyAll();
-		this.checking_documents = true;
+		this.checking_documents = false;
 		GenericIO.writelnString("Showing Documents (Passenger)");
 		while(!p.getDocuments_validated())
 		{
@@ -118,6 +119,7 @@ public class DepAirport
 			e.printStackTrace();
 		}
 		p.setPassengerState(EPassengerState.IN_FLIGHT);
+		repos.setPassengerState(p.getPassengerId(), EPassengerState.IN_FLIGHT);
 	}
 
 	public void parkAtTransferGate()
@@ -132,6 +134,7 @@ public class DepAirport
 			e.printStackTrace();
 		}
 		p.setPilotState(EPilotState.AT_TRANSFER_GATE);
+		repos.setPilotState(EPilotState.AT_TRANSFER_GATE);
 	}
 	
 	public synchronized void informPlaneReadyForBoarding()
@@ -141,12 +144,14 @@ public class DepAirport
 		this.plane_has_arrived = true;
 		Pilot p = (Pilot)Thread.currentThread();
 		p.setPilotState(EPilotState.READY_FOR_BOARDING);
+		p.setPilotState(EPilotState.READY_FOR_BOARDING);
 	}
 	
 	public synchronized void waitForAllBoard()
 	{
 		Pilot p = (Pilot)Thread.currentThread();
 		p.setPilotState(EPilotState.WAITING_FOR_BOARDING);
+		repos.setPilotState(EPilotState.WAITING_FOR_BOARDING);
 		GenericIO.writelnString("Wait for all board (Pilot)");
 		while(!this.ready_to_takeoff)
 		{
@@ -178,12 +183,14 @@ public class DepAirport
 		}
 		GenericIO.writelnString("Prepare for pass boarding After Wait (Hostess)");
 		h.setHostessState(EHostessState.WAIT_FOR_PASSENGER);
+		repos.setHostessState(EHostessState.WAIT_FOR_PASSENGER);
 	}
 	
 	public synchronized void checkDocuments()
 	{
 		Hostess h = (Hostess)Thread.currentThread();
 		h.setHostessState(EHostessState.CHECK_PASSENGER);	
+		repos.setHostessState(EHostessState.CHECK_PASSENGER);
 		notifyAll();
 		this.waiting_for_call = false;
 		GenericIO.writelnString("Asking for documents (Hostess)");
@@ -215,6 +222,7 @@ public class DepAirport
 	{ 
 		Hostess h = (Hostess)Thread.currentThread();
 		h.setHostessState(EHostessState.WAIT_FOR_PASSENGER);
+		repos.setHostessState(EHostessState.WAIT_FOR_PASSENGER);
 		notifyAll();
 		this.waiting_for_call = true;
 		GenericIO.writelnString("Waiting for next Passenger (Hostess)");
@@ -239,12 +247,14 @@ public class DepAirport
 		this.ready_to_takeoff = true;
 		Hostess h = (Hostess)Thread.currentThread();
 		h.setHostessState(EHostessState.READY_TO_FLY);
+		repos.setHostessState(EHostessState.READY_TO_FLY);
 	}
 	
 	public void waitForNextFlight()
 	{
 		Hostess h = (Hostess)Thread.currentThread();
 		h.setHostessState(EHostessState.WAIT_FOR_FLIGHT);
+		repos.setHostessState(EHostessState.WAIT_FOR_FLIGHT);
 		GenericIO.writelnString("Let's wait for next plane (Hostess)");
 			
 	}

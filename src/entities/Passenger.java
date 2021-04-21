@@ -87,6 +87,12 @@ public class Passenger extends Thread
 					{
 						GenericIO.writelnString("Documents validated (Passenger)");
 						depAirport.boardThePlane();
+						try {
+							plane.enterPassenger();
+						} catch (MemException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 					}
 					else											// If the passenger documents were not validated, then he shows his documents
 					{

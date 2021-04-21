@@ -30,6 +30,7 @@ public class DestAirport
 		notifyAll();
 		Pilot p = (Pilot)Thread.currentThread();
 		p.setPilotState(EPilotState.DEBOARDING);
+		repos.setPilotState(EPilotState.DEBOARDING);
 	}
 	
 }

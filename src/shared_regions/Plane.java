@@ -44,6 +44,7 @@ public class Plane
 		Passenger passenger = (Passenger) Thread.currentThread();
 		passengers_on_plane[currentPassengers] = passenger;
 		currentPassengers += 1;
+		GenericIO.writelnString("Number of passengers: " + this.currentPassengers + " (" + passenger.getPassengerId() + ")");
 	}
 	
 	/**
