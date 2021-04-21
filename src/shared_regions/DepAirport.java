@@ -82,6 +82,7 @@ public class DepAirport
 				e.printStackTrace();
 			}
 		}
+		GenericIO.writelnString("Waiting in Queue After wait (Passenger)");
 	}
 	
 	public synchronized void showDocuments()
@@ -101,6 +102,7 @@ public class DepAirport
 				e.printStackTrace();
 			}
 		}
+		GenericIO.writelnString("Showing Documents After wait  (Passenger)");
 	}
 	
 	public void boardThePlane()
@@ -156,6 +158,7 @@ public class DepAirport
 				e.printStackTrace();
 			}
 		}
+		GenericIO.writelnString("Wait for all board after wait(Pilot)");
 		this.ready_to_takeoff = false;
 	}
 	
@@ -173,6 +176,7 @@ public class DepAirport
 				e.printStackTrace();
 			}
 		}
+		GenericIO.writelnString("Prepare for pass boarding After Wait (Hostess)");
 		h.setHostessState(EHostessState.WAIT_FOR_PASSENGER);
 	}
 	
@@ -224,6 +228,7 @@ public class DepAirport
 				e.printStackTrace();
 			}
 		}
+		GenericIO.writelnString("Waiting for next Passenger After wait(Hostess)");
 	}
 	
 	public synchronized void informPlaneReadyToTakeOff()
