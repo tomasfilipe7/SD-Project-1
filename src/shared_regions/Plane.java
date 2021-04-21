@@ -77,6 +77,7 @@ public class Plane
 			Pilot.sleep((long)(1 + 10 * Math.random()));
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
+			GenericIO.writelnString("Catch flyToDestinationPoint error");
 			e.printStackTrace();
 		}
 	}
@@ -91,6 +92,7 @@ public class Plane
 				wait();
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
+				GenericIO.writelnString("Catch error while currentPassengers > 0 at flyToDestinationPoint");
 				e.printStackTrace();
 			}
 		}
@@ -102,6 +104,7 @@ public class Plane
 		try {
 			Pilot.sleep((long)(1 + 10 * Math.random()));
 		} catch (InterruptedException e) {
+			GenericIO.writelnString("Catch error when pilot state = FLYING_BACK at flyToDestinationPoint");
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -117,6 +120,7 @@ public class Plane
 				wait();
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
+				GenericIO.writelnString("Catch error while waiting for the end of flight");
 				return false;
 			}
 		}
@@ -132,6 +136,7 @@ public class Plane
 		try {
 			Passenger.sleep((long)(1 + 10 * Math.random()));
 		} catch (InterruptedException e) {
+			GenericIO.writelnString("Catch error while passengers are leaving the plane");
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
