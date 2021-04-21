@@ -6,6 +6,7 @@ package entities;
 import java.lang.Thread.State;
 
 import common_infrastructures.EHostessState;
+import common_infrastructures.MemException;
 import genclass.GenericIO;
 import shared_regions.DepAirport;
 import shared_regions.DestAirport;
@@ -71,7 +72,12 @@ public class Hostess extends Thread
 					}
 					else if(!plane.isFull() && !depAirport.QueueIsEmpty())
 					{
-						depAirport.checkDocuments();
+						try {
+							depAirport.checkDocuments();
+						} catch (MemException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 					}
 					break;
 				case CHECK_PASSENGER:

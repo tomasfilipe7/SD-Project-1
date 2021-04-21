@@ -70,7 +70,7 @@ public class DepAirport
 		}
 		GenericIO.writelnString("Waiting in Queue (Passenger)");
 		notifyAll();
-		while(this.waiting_for_call)
+		while(!p.isTo_be_called())
 		{
 			try {
 				wait();
@@ -83,6 +83,7 @@ public class DepAirport
 		}
 		p.setPassengerState(EPassengerState.IN_QUEUE);
 		repos.setPassengerState(p.getPassengerId(), EPassengerState.IN_QUEUE);
+		repos.reportStatus("passenger " + p.getPassengerId() + " checked.");
 		GenericIO.writelnString("Waiting in Queue After wait (Passenger)");
 	}
 	
@@ -143,6 +144,7 @@ public class DepAirport
 		GenericIO.writelnString("informPlaneReadyForBoarding (Pilot)");
 		this.plane_has_arrived = true;
 		Pilot p = (Pilot)Thread.currentThread();
+		repos.reportStatus("boarding started.");
 		p.setPilotState(EPilotState.READY_FOR_BOARDING);
 		repos.setPilotState(EPilotState.READY_FOR_BOARDING);
 	}
@@ -181,19 +183,20 @@ public class DepAirport
 				e.printStackTrace();
 			}
 		}
-		repos.reportStatus("boarding started.");
 		GenericIO.writelnString("Prepare for pass boarding After Wait (Hostess)");
 		h.setHostessState(EHostessState.WAIT_FOR_PASSENGER);
 		repos.setHostessState(EHostessState.WAIT_FOR_PASSENGER);
 	}
 	
-	public synchronized void checkDocuments()
+	public synchronized void checkDocuments() throws MemException
 	{
 		Hostess h = (Hostess)Thread.currentThread();
-		h.setHostessState(EHostessState.CHECK_PASSENGER);	
-		repos.setHostessState(EHostessState.CHECK_PASSENGER);
 		notifyAll();
-		this.waiting_for_call = false;
+		
+		Passenger p;
+		p = passengersQueue.read();
+		p.setTo_be_called(true);
+		
 		GenericIO.writelnString("Asking for documents (Hostess)");
 		while(this.checking_documents)
 		{
@@ -205,18 +208,11 @@ public class DepAirport
 				e.printStackTrace();
 			}
 		}
+		h.setHostessState(EHostessState.CHECK_PASSENGER);	
+		repos.setHostessState(EHostessState.CHECK_PASSENGER);
 		GenericIO.writelnString("Documents handed Hostess)");
-		Passenger p;
-		try {
-			p = passengersQueue.read();
-			p.setDocuments_validated(true);
-			notifyAll();
-			repos.reportStatus("passenger " + p.getPassengerId() + " checked.");
-		} catch (MemException e) {
-			// TODO Auto-generated catch block
-			GenericIO.writelnString("Catching error validating documents");
-			e.printStackTrace();
-		}
+		p.setDocuments_validated(true);
+		notifyAll();
 		GenericIO.writelnString("Documents checked (Hostess)");
 	}
 	

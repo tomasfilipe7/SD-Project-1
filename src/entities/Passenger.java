@@ -45,6 +45,10 @@ public class Passenger extends Thread
 	 */
 	private boolean documents_validated;
 	
+	/**
+	 * 
+	 */
+	private boolean to_be_called;
 	
 	
 	/**
@@ -64,8 +68,9 @@ public class Passenger extends Thread
 //		this.has_arrived_at_airport = false;
 		this.has_arrived_at_destination = false;
 		this.documents_validated = false;
+		this.to_be_called = false;
 	}
-	
+
 	/**
 	 * Life cycle of the Passenger
 	 */
@@ -165,5 +170,12 @@ public class Passenger extends Thread
 		return this.documents_validated;
 	}
 	
+	public boolean isTo_be_called() {
+		return to_be_called;
+	}
+
+	public void setTo_be_called(boolean to_be_called) {
+		this.to_be_called = to_be_called;
+	}
 	
 }
