@@ -115,7 +115,7 @@ public class GeneralRepos {
 		log.writelnString();
 	}
 	
-	public void reportStatus(String condition)
+	public synchronized void reportStatus(String condition)
 	{
 		TextFile log = new TextFile();
 		String lineStatus = "";
@@ -126,7 +126,13 @@ public class GeneralRepos {
 		}
 		
 		lineStatus += "Flight x: " + condition;
+		log.writelnString();
 		log.writelnString(lineStatus);
+		
+		if(!log.close()) {
+			GenericIO.writelnString("The operation of closing the file " + fileName + " failed");
+			System.exit(1);
+		}
 	}
 	
 	/**
