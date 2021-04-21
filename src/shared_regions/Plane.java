@@ -82,7 +82,7 @@ public class Plane
 		}
 	}
 	
-	public void flyToDeparturePoint()
+	public synchronized void flyToDeparturePoint()
 	{
 		this.has_arrived = true;
 		GenericIO.writelnString("Waiting for passengers to leave the plane...");
@@ -110,7 +110,7 @@ public class Plane
 		}
 	}
 	
-	public boolean waitForEndOfFlight()
+	public synchronized boolean waitForEndOfFlight()
 	{
 		// Implement wait for end of flight
 		GenericIO.writelnString("Waiting for the end of flight...");
@@ -130,7 +130,7 @@ public class Plane
 		return true;
 	}
 	
-	public void leaveThePlane()
+	public synchronized void leaveThePlane()
 	{
 		// Implement leave the plane
 		try {

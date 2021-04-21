@@ -24,7 +24,7 @@ public class DestAirport
 		this.repos = repos;
 	}
 
-	public void announceArrival()
+	public synchronized void announceArrival()
 	{
 		GenericIO.writelnString("We have arrived");
 		notifyAll();

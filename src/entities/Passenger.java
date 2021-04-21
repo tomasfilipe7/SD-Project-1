@@ -77,33 +77,33 @@ public class Passenger extends Thread
 			switch(passengerState)
 			{
 				case GOING_TO_AIRPORT:
-					GenericIO.writelnString("Going to airport");
+					GenericIO.writelnString("Going to airport (Passenger)");
 					travelToAirport();								// The passenger travels to the airport.
 					depAirport.waitInQueue();		// The passenger arrives at the queue and starts waiting.
 					break;
 				case IN_QUEUE:
-					GenericIO.writelnString("In Queue");
+					GenericIO.writelnString("In Queue (Passenger)");
 					if(documents_validated)							// If passenger documents were validated, then he is ready to board the plane
 					{
-						GenericIO.writelnString("Documents validated");
+						GenericIO.writelnString("Documents validated (Passenger)");
 						depAirport.boardThePlane();
 					}
 					else											// If the passenger documents were not validated, then he shows his documents
 					{
-						GenericIO.writelnString("Showing documents");
+						GenericIO.writelnString("Showing documents (Passenger)");
 						depAirport.showDocuments();
 					}
 					break;
 				case IN_FLIGHT:
-					GenericIO.writelnString("In Flight");
+					GenericIO.writelnString("In Flight (Passenger)");
 					if(plane.waitForEndOfFlight())					// Passenger waits until the end of flight, and leaves the plane
 					{
-						GenericIO.writelnString("FLight ended");
+						GenericIO.writelnString("FLight ended (Passenger)");
 						plane.leaveThePlane();
 					}
 					break;
 				case AT_DESTINATION:
-					GenericIO.writelnString("Arrived at destination");
+					GenericIO.writelnString("Arrived at destination (Passenger)");
 					this.has_arrived_at_destination = true;			// End of passenger's life cycle.
 					break;
 			}
@@ -120,6 +120,7 @@ public class Passenger extends Thread
 		try {
 			sleep((long)(1 + 10 * Math.random()));
 		} catch (InterruptedException e) {
+			GenericIO.writelnString("Catching Travelling error");
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
