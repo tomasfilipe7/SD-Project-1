@@ -47,7 +47,7 @@ public class Pilot extends Thread
 			switch(pilotState)
 			{
 				case AT_TRANSFER_GATE:
-					GenericIO.writelnString("Pilot AT_TRANSFER_GATE");
+					GenericIO.writelnString("Pilot AT_TRANSFER_GATE (Pilot state)");
 					if(is_comming_back && depAirport.QueueIsEmpty())
 					{
 						has_finished = true;
@@ -56,23 +56,23 @@ public class Pilot extends Thread
 					depAirport.informPlaneReadyForBoarding();
 					break;
 				case READY_FOR_BOARDING:
-					GenericIO.writelnString("Pilot READY_FOR_BOARDING");
+					GenericIO.writelnString("Pilot READY_FOR_BOARDING (Pilot state)");
 					depAirport.waitForAllBoard();
 					break;
 				case WAITING_FOR_BOARDING:
-					GenericIO.writelnString("Pilot WAITING_FOR_BOARDING");
+					GenericIO.writelnString("Pilot WAITING_FOR_BOARDING (Pilot state)");
 					plane.flyToDestinationPoint();
 					break;
 				case FLYING_FORWARD:
-					GenericIO.writelnString("Pilot FLYING_FORWARD");
+					GenericIO.writelnString("Pilot FLYING_FORWARD (Pilot state)");
 					destAirport.announceArrival();
 					break;
 				case DEBOARDING:
-					GenericIO.writelnString("Pilot DEBOARDING");
+					GenericIO.writelnString("Pilot DEBOARDING (Pilot state)");
 					plane.flyToDeparturePoint();
 					break;
 				case FLYING_BACK:
-					GenericIO.writelnString("Pilot FLYING_BACK");
+					GenericIO.writelnString("Pilot FLYING_BACK (Pilot state)");
 					depAirport.parkAtTransferGate();
 					is_comming_back = true;
 					break;

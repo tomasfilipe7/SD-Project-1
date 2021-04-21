@@ -60,11 +60,11 @@ public class Hostess extends Thread
 			switch(hostessState)
 			{
 				case WAIT_FOR_FLIGHT:
-					GenericIO.writelnString("Hostess WAIT_FOR_FLIGHT");
+					GenericIO.writelnString("Hostess WAIT_FOR_FLIGHT (Hostess state)");
 					depAirport.prepareForPassBoarding();
 					break;
 				case WAIT_FOR_PASSENGER:
-					GenericIO.writelnString("Hostess WAIT_FOR_PASSENGER");
+					GenericIO.writelnString("Hostess WAIT_FOR_PASSENGER (Hostess state)");
 					if(plane.isFull() || (depAirport.QueueIsEmpty() && plane.isReady()))
 					{
 						depAirport.informPlaneReadyToTakeOff();
@@ -75,11 +75,11 @@ public class Hostess extends Thread
 					}
 					break;
 				case CHECK_PASSENGER:
-					GenericIO.writelnString("Hostess CHECK_PASSENGER");
+					GenericIO.writelnString("Hostess CHECK_PASSENGER (Hostess state)");
 					depAirport.waitForNextPassenger();
 					break;
 				case READY_TO_FLY:
-					GenericIO.writelnString("Hostess READY_TO_FLY");
+					GenericIO.writelnString("Hostess READY_TO_FLY (Hostess state)");
 					depAirport.waitForNextFlight();
 					break;
 			}
