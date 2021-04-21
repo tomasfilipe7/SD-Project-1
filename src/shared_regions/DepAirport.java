@@ -18,6 +18,7 @@ import entities.Hostess;
 public class DepAirport 
 {
 	private MemFIFO<Passenger> passengersQueue;
+	private GeneralRepos repos;
 	
 	/**
 	 * Passengers waiting to be called by hostess
@@ -35,9 +36,10 @@ public class DepAirport
 	/**
 	 * @param passengersQueue
 	 */
-	public DepAirport(int passengersQueueMax) {
+	public DepAirport(int passengersQueueMax, GeneralRepos repos) {
 		super();
 		this.passengersQueue = new MemFIFO<Passenger>(passengersQueueMax);
+		this.repos = repos;
 		this.waiting_for_call = true;
 		this.checking_documents = true;
 		this.plane_has_arrived = false;

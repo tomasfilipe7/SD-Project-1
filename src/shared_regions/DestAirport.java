@@ -13,7 +13,16 @@ import entities.Pilot;
  */
 public class DestAirport 
 {
+	private GeneralRepos repos;
 	
+	/**
+	 * @param repos
+	 */
+	public DestAirport(GeneralRepos repos) {
+		super();
+		this.repos = repos;
+	}
+
 	public void announceArrival()
 	{
 		notifyAll();

@@ -7,6 +7,9 @@ import shared_regions.*;
 
 import java.io.IOException;
 
+import common_infrastructures.EHostessState;
+import common_infrastructures.EPassengerState;
+import common_infrastructures.EPilotState;
 import entities.*;
 import genclass.FileOp;
 import genclass.GenericIO;
@@ -39,9 +42,7 @@ public class AirLift {
 		/* problem initialization */
 		
 		GenericIO.writelnString("\n" + "     Airlift\n");
-		GenericIO.writeString("Number of iterations of the passenger life cycle? ");
-		nIter = GenericIO.readlnInt();
-		
+
 		do {
 			GenericIO.writeString("Logging file name: ");
 			fileName = GenericIO.readlnString();
@@ -62,20 +63,25 @@ public class AirLift {
 			}
 		} while (!success);
 		
-		// falta acrescentar o repos nas shared regions, por isso estão comentadas
-		repos = new GeneralRepos(fileName, nIter);
-		// depAirport = new DepAirport(repos);
-		// destAirport = new DestAirport(repos);
-		// plane = new Plane(repos);
+		/* Instantiate the shared regions*/
+		repos = new GeneralRepos(fileName);
+		depAirport = new DepAirport(SimulParams.P,repos);
+		destAirport = new DestAirport(repos);
+		plane = new Plane(SimulParams.Min_Cap, SimulParams.Max_Cap, repos);
 		
+		/* Instantiate the entities*/
 		for(int i = 0; i < SimulParams.P; i++) {
-			// passenger[i] = new Passenger ("pass_" + (i+1), i, depAirport, destAirport, plane);
+			 passenger[i] = new Passenger (i, EPassengerState.GOING_TO_AIRPORT, depAirport, destAirport, plane);
 		}
+		pilot = new Pilot(EPilotState.AT_TRANSFER_GATE, depAirport, destAirport, plane);
+		hostess = new Hostess(EHostessState.WAIT_FOR_FLIGHT, depAirport, plane);
 		
 		/* start of the simulation */
 		for(int i = 0; i < SimulParams.P; i++) {
 			passenger[i].start();
 		}
+		hostess.start();
+		pilot.start();
 		
 		/* waiting for the end of the simulation */
 		GenericIO.writelnString();
@@ -87,6 +93,18 @@ public class AirLift {
 			
 			GenericIO.writelnString("The passenger " + (i+1) + " has terminated.");
 		}
+		GenericIO.writelnString();
+		
+		try {
+			hostess.join();
+		}catch(InterruptedException e) {}
+		GenericIO.writelnString("The hostess has terminated.");
+		GenericIO.writelnString();
+		
+		try {
+			pilot.join();
+		}catch(InterruptedException e) {}
+		GenericIO.writelnString("The pilot has terminated.");
 		GenericIO.writelnString();
 	}
 

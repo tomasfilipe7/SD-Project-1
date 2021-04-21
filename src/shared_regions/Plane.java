@@ -21,17 +21,19 @@ public class Plane
 	private Passenger[] passengers_on_plane;
 	private int currentPassengers;
 	private boolean has_arrived;
+	private GeneralRepos repos;
 	
 	/**
 	 * @param max_passengers
 	 * @param min_passengers
 	 */
-	public Plane(int max_passengers, int min_passengers) {
+	public Plane(int max_passengers, int min_passengers, GeneralRepos repos) {
 		super();
 		this.max_passengers = max_passengers;
 		this.min_passengers = min_passengers;
 		this.currentPassengers = 0;
 		passengers_on_plane = new Passenger[max_passengers];
+		this.repos = repos;
 		this.has_arrived = false;
 	}
 	
