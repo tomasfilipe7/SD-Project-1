@@ -21,7 +21,6 @@ public class Pilot extends Thread
 	private final DestAirport destAirport;
 	private final Plane plane;
 	private boolean has_finished;
-	private boolean is_comming_back;
 	
 	/**
 	 * @param state
@@ -36,7 +35,6 @@ public class Pilot extends Thread
 		this.destAirport = destAirport;
 		this.plane = plane;
 		this.has_finished = false;
-		this.is_comming_back = false;
 	}
 
 	@Override
@@ -48,7 +46,7 @@ public class Pilot extends Thread
 			{
 				case AT_TRANSFER_GATE:
 					GenericIO.writelnString("Pilot AT_TRANSFER_GATE (Pilot state)");
-					if(is_comming_back && depAirport.QueueIsEmpty())
+					if(plane.isIs_comming_back() && depAirport.QueueIsEmpty())
 					{
 						has_finished = true;
 						break;
@@ -56,25 +54,20 @@ public class Pilot extends Thread
 					depAirport.informPlaneReadyForBoarding();
 					break;
 				case READY_FOR_BOARDING:
-					GenericIO.writelnString("Pilot READY_FOR_BOARDING (Pilot state)");
 					depAirport.waitForAllBoard();
 					break;
 				case WAITING_FOR_BOARDING:
-					GenericIO.writelnString("Pilot WAITING_FOR_BOARDING (Pilot state)");
 					plane.flyToDestinationPoint();
 					break;
 				case FLYING_FORWARD:
-					GenericIO.writelnString("Pilot FLYING_FORWARD (Pilot state)");
 					destAirport.announceArrival();
 					break;
 				case DEBOARDING:
-					GenericIO.writelnString("Pilot DEBOARDING (Pilot state)");
 					plane.flyToDeparturePoint();
 					break;
 				case FLYING_BACK:
-					GenericIO.writelnString("Pilot FLYING_BACK (Pilot state)");
 					depAirport.parkAtTransferGate();
-					is_comming_back = true;
+					plane.setIs_comming_back(true);
 					break;
 			}
 		}
@@ -86,6 +79,10 @@ public class Pilot extends Thread
 
 	public void setPilotState(EPilotState pilotState) {
 		this.pilotState = pilotState;
+	}
+
+	public Plane getPlane() {
+		return plane;
 	}
 	
 	

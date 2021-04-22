@@ -23,6 +23,8 @@ public class Plane
 	private int currentPassengers;
 	private boolean has_arrived;
 	private GeneralRepos repos;
+	private int flightNum;
+	private boolean is_comming_back;
 	
 	/**
 	 * @param max_passengers
@@ -36,15 +38,23 @@ public class Plane
 		passengers_on_plane = new Passenger[max_passengers];
 		this.repos = repos;
 		this.has_arrived = false;
+		this.is_comming_back = false;
 	}
 	
-	public void enterPassenger() throws MemException
+	public synchronized void enterPassenger() throws MemException
 	{
-		GenericIO.writelnString("Entering passenger...");
 		Passenger passenger = (Passenger) Thread.currentThread();
-		passengers_on_plane[currentPassengers] = passenger;
-		currentPassengers += 1;
-		GenericIO.writelnString("Number of passengers: " + this.currentPassengers + " (" + passenger.getPassengerId() + ")");
+		for(int i = 0; i < this.passengers_on_plane.length; i++)
+		{
+			if(this.passengers_on_plane[i] == null)
+			{
+				this.passengers_on_plane[i] = passenger;
+				break;
+			}
+		}
+		this.currentPassengers += 1;
+		repos.setInFlight(this.currentPassengers);
+		GenericIO.writelnString("Current passengers: " + this.currentPassengers);
 	}
 	
 	/**
@@ -69,9 +79,9 @@ public class Plane
 		return currentPassengers == 0;
 	}
 	
-	public void flyToDestinationPoint()
+	public synchronized void flyToDestinationPoint()
 	{
-		GenericIO.writelnString("Flying to destination point...");
+		GenericIO.writelnString("Plane taking off");
 		Pilot p = (Pilot)Thread.currentThread();
 		repos.reportStatus("departed with " + this.currentPassengers + " passengers.");
 		p.setPilotState(EPilotState.FLYING_FORWARD);
@@ -80,81 +90,96 @@ public class Plane
 			Pilot.sleep((long)(1 + 10 * Math.random()));
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
-			GenericIO.writelnString("Catch flyToDestinationPoint error");
 			e.printStackTrace();
 		}
 	}
 	
 	public synchronized void flyToDeparturePoint()
 	{
-		repos.reportStatus(" returning.");
 		this.has_arrived = true;
-		GenericIO.writelnString("Waiting for passengers to leave the plane...");
 		while(currentPassengers > 0)
 		{
 			try {
 				wait();
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
-				GenericIO.writelnString("Catch error while currentPassengers > 0 at flyToDestinationPoint");
 				e.printStackTrace();
 			}
-		}
-		
-		GenericIO.writelnString("All passengers out. Flying to departure point...");
-		
+		}	
+		GenericIO.writelnString("Returning");
 		Pilot p = (Pilot)Thread.currentThread();
+		repos.reportStatus(" returning.");
 		p.setPilotState(EPilotState.FLYING_BACK);
 		repos.setPilotState(EPilotState.FLYING_BACK);
 		try {
 			Pilot.sleep((long)(1 + 10 * Math.random()));
 		} catch (InterruptedException e) {
-			GenericIO.writelnString("Catch error when pilot state = FLYING_BACK at flyToDestinationPoint");
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		this.flightNum += 1;
+		this.repos.setFlightNum(this.flightNum);
 	}
 	
-	public synchronized boolean waitForEndOfFlight()
+	public synchronized void waitForEndOfFlight()
 	{
 		// Implement wait for end of flight
-		GenericIO.writelnString("Waiting for the end of flight...");
 		while(!this.has_arrived)
 		{
+			GenericIO.writelnString("Plane arrived: " + this.has_arrived);
 			try {
 				wait();
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
-				GenericIO.writelnString("Catch error while waiting for the end of flight");
-				return false;
 			}
+			GenericIO.writelnString("Plane arrived: " + this.has_arrived);
 		}
-		
-		GenericIO.writelnString("Flight finished...");
-			
-		return true;
+		GenericIO.writelnString("Flight Ended");
 	}
 	
 	public synchronized void leaveThePlane()
 	{
+		GenericIO.writelnString("Leaving plane");
 		// Implement leave the plane
+		Passenger p = (Passenger) Thread.currentThread();
 		try {
 			Passenger.sleep((long)(1 + 10 * Math.random()));
 		} catch (InterruptedException e) {
-			GenericIO.writelnString("Catch error while passengers are leaving the plane");
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		GenericIO.writelnString("Passengers leaving the plane...");
-		passengers_on_plane[currentPassengers] = null;
+		for(int i = 0; i < this.passengers_on_plane.length; i++)
+		{
+			if(this.passengers_on_plane[i].getPassengerId() == p.getPassengerId())
+			{
+				this.passengers_on_plane[i] = null;
+				break;
+			}
+		}
 		currentPassengers -= 1;
+		this.repos.setInFlight(this.currentPassengers);
 		if(currentPassengers <= 0)
 		{
+			GenericIO.writelnString("Leaving");
 			notifyAll();
-			GenericIO.writelnString("No more passengers here...");
 		}
-		Passenger p = (Passenger) Thread.currentThread();
 		p.setPassengerState(EPassengerState.AT_DESTINATION);
 		repos.setPassengerState(p.getPassengerId(), EPassengerState.AT_DESTINATION);
 	}
+
+	public void setHas_arrived(boolean has_arrived) {
+		this.has_arrived = has_arrived;
+	}
+
+	public boolean isIs_comming_back() {
+		return is_comming_back;
+	}
+
+	public void setIs_comming_back(boolean is_comming_back) {
+		this.is_comming_back = is_comming_back;
+	}
+	
+	
+	
+	
 }

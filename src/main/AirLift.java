@@ -69,19 +69,21 @@ public class AirLift {
 		destAirport = new DestAirport(repos);
 		plane = new Plane(SimulParams.Min_Cap, SimulParams.Max_Cap, repos);
 		
+		pilot = new Pilot(EPilotState.AT_TRANSFER_GATE, depAirport, destAirport, plane);
+		hostess = new Hostess(EHostessState.WAIT_FOR_FLIGHT, depAirport, plane);
 		/* Instantiate the entities*/
 		for(int i = 0; i < SimulParams.P; i++) {
 			 passenger[i] = new Passenger (i, EPassengerState.GOING_TO_AIRPORT, depAirport, destAirport, plane);
 		}
-		pilot = new Pilot(EPilotState.AT_TRANSFER_GATE, depAirport, destAirport, plane);
-		hostess = new Hostess(EHostessState.WAIT_FOR_FLIGHT, depAirport, plane);
+		
 		
 		/* start of the simulation */
+		pilot.start();
+		hostess.start();
 		for(int i = 0; i < SimulParams.P; i++) {
 			passenger[i].start();
 		}
-		hostess.start();
-		pilot.start();
+		
 		
 		/* waiting for the end of the simulation */
 		GenericIO.writelnString();

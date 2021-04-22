@@ -49,6 +49,7 @@ public class Passenger extends Thread
 	 * 
 	 */
 	private boolean to_be_called;
+	private boolean showing_documents;
 	
 	
 	/**
@@ -69,6 +70,7 @@ public class Passenger extends Thread
 		this.has_arrived_at_destination = false;
 		this.documents_validated = false;
 		this.to_be_called = false;
+		this.showing_documents = false;
 	}
 
 	/**
@@ -82,39 +84,32 @@ public class Passenger extends Thread
 			switch(passengerState)
 			{
 				case GOING_TO_AIRPORT:
-					GenericIO.writelnString("Going to airport (Passenger)");
 					travelToAirport();								// The passenger travels to the airport.
 					depAirport.waitInQueue();		// The passenger arrives at the queue and starts waiting.
 					break;
 				case IN_QUEUE:
-					GenericIO.writelnString("In Queue (Passenger)");
-					if(documents_validated)							// If passenger documents were validated, then he is ready to board the plane
-					{
-						GenericIO.writelnString("Documents validated (Passenger)");
-						depAirport.boardThePlane();
-						try {
-							plane.enterPassenger();
-						} catch (MemException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
+					try {
+						sleep((long)(1 + 50 * Math.random()));
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
 					}
-					else											// If the passenger documents were not validated, then he shows his documents
-					{
-						GenericIO.writelnString("Showing documents (Passenger)");
-						depAirport.showDocuments();
+					depAirport.showDocuments();
+					GenericIO.writelnString("Documents Validated");
+					depAirport.boardThePlane();
+					try {
+						plane.enterPassenger();
+					} catch (MemException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
 					}
 					break;
 				case IN_FLIGHT:
-					GenericIO.writelnString("In Flight (Passenger)");
-					if(plane.waitForEndOfFlight())					// Passenger waits until the end of flight, and leaves the plane
-					{
-						GenericIO.writelnString("FLight ended (Passenger)");
-						plane.leaveThePlane();
-					}
+					plane.waitForEndOfFlight();					// Passenger waits until the end of flight, and leaves the plane
+					plane.leaveThePlane();
 					break;
 				case AT_DESTINATION:
-					GenericIO.writelnString("Arrived at destination (Passenger)");
+					this.destAirport.passengerArrived();
 					this.has_arrived_at_destination = true;			// End of passenger's life cycle.
 					break;
 			}
@@ -129,9 +124,8 @@ public class Passenger extends Thread
 	{
 		// Implement travel to airport
 		try {
-			sleep((long)(1 + 10 * Math.random()));
+			sleep((long)(1 + 50 * Math.random()));
 		} catch (InterruptedException e) {
-			GenericIO.writelnString("Catching Travelling error");
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -163,6 +157,7 @@ public class Passenger extends Thread
 	 * @param documents_validated
 	 */
 	public void setDocuments_validated(boolean documents_validated) {
+		GenericIO.writelnString("Documents validated setter: " + documents_validated);
 		this.documents_validated = documents_validated;
 	}
 	public boolean getDocuments_validated()
@@ -176,6 +171,14 @@ public class Passenger extends Thread
 
 	public void setTo_be_called(boolean to_be_called) {
 		this.to_be_called = to_be_called;
+	}
+
+	public boolean isShowing_documents() {
+		return showing_documents;
+	}
+
+	public void setShowing_documents(boolean showing_documents) {
+		this.showing_documents = showing_documents;
 	}
 	
 }

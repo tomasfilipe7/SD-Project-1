@@ -30,6 +30,10 @@ public class GeneralRepos {
 	 * State of the Pilot
 	 */
 	private EPilotState pilotState;
+	private int inQueue = 0;
+	private int inFlight = 0;
+	private int inPTAL = 0;
+	private int flightNum = 1;
 	
 	
 	/**
@@ -92,6 +96,23 @@ public class GeneralRepos {
 		reportStatus();
 	}
 	
+	public void setFlightNum(int flightNum) {
+		this.flightNum = flightNum;
+	}
+
+	
+	public void setInQueue(int inQueue) {
+		this.inQueue = inQueue;
+	}
+
+	public void setInFlight(int inFlight) {
+		this.inFlight = inFlight;
+	}
+
+	public void setInPTAL(int inPTAL) {
+		this.inPTAL = inPTAL;
+	}
+
 	/**
 	 * Write the header to the logging file.
 	 * 
@@ -125,7 +146,7 @@ public class GeneralRepos {
 			System.exit(1);
 		}
 		
-		lineStatus += "Flight x: " + condition;
+		lineStatus += "Flight " + this.flightNum + ": " + condition;
 		log.writelnString();
 		log.writelnString(lineStatus);
 		
@@ -134,6 +155,7 @@ public class GeneralRepos {
 			System.exit(1);
 		}
 	}
+	
 	
 	/**
 	 * Write a state line at the end of the logging file. */
@@ -196,11 +218,11 @@ public class GeneralRepos {
 					lineStatus += "INFL  ";
 					break;
 				case AT_DESTINATION:
-					lineStatus += "ATDS";
+					lineStatus += "ATDS  ";
 					break;
 			}
 		}
-		
+		lineStatus +=this.inQueue + "     " + this.inFlight + "     " + this.inPTAL;
 		log.writelnString(lineStatus);
 		if(!log.close()) {
 			GenericIO.writelnString("The operation of closing the file " + fileName + " failed");

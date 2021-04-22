@@ -18,6 +18,7 @@ public class DestAirport
 {
 	private GeneralRepos repos;
 	private Passenger[] passengers;
+	private int pass_arrived;
 	/**
 	 * @param repos
 	 */
@@ -25,16 +26,23 @@ public class DestAirport
 		super();
 		this.repos = repos;
 		passengers = new Passenger[SimulParams.P];
+		this.pass_arrived = 0;
 	}
 	
+	public synchronized void passengerArrived()
+	{
+		this.pass_arrived += 1;
+		this.repos.setInPTAL(this.pass_arrived);
+	}
 	public synchronized void announceArrival()
 	{
-		GenericIO.writelnString("We have arrived");
-		notifyAll();
+		GenericIO.writelnString("Announce Arrival");
 		Pilot p = (Pilot)Thread.currentThread();
-		p.setPilotState(EPilotState.DEBOARDING);
 		repos.reportStatus(" arrived.");
+		p.setPilotState(EPilotState.DEBOARDING);
 		repos.setPilotState(EPilotState.DEBOARDING);
+		p.getPlane().setHas_arrived(true);
+		notifyAll();
 	}
 	
 }
