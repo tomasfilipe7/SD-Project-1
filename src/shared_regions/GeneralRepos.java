@@ -30,6 +30,7 @@ public class GeneralRepos {
 	 * State of the Pilot
 	 */
 	private EPilotState pilotState;
+	private MemFIFO<Integer> finalStatistics_passengers;
 	private int inQueue = 0;
 	private int inFlight = 0;
 	private int inPTAL = 0;
@@ -57,7 +58,7 @@ public class GeneralRepos {
 		for(int i = 0; i < SimulParams.P; i++) {
 			passengerState[i] = EPassengerState.GOING_TO_AIRPORT;
 		}
-		
+		this.finalStatistics_passengers = new MemFIFO<Integer>(SimulParams.P);
 		reportInitialStatus();
 		
 	}
@@ -112,6 +113,19 @@ public class GeneralRepos {
 	public void setInPTAL(int inPTAL) {
 		this.inPTAL = inPTAL;
 	}
+	
+	
+	public int getInQueue() {
+		return inQueue;
+	}
+
+	public int getInPTAL() {
+		return inPTAL;
+	}
+
+	public int getFlightNum() {
+		return flightNum;
+	}
 
 	/**
 	 * Write the header to the logging file.
@@ -136,6 +150,52 @@ public class GeneralRepos {
 		log.writelnString();
 	}
 	
+	public synchronized void updateStatistics(int num_passengers)
+	{
+		try {
+			this.finalStatistics_passengers.write(num_passengers);
+		} catch (MemException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public synchronized void writeStatistics()
+	{
+		TextFile log = new TextFile();		
+		if(!log.openForAppending(".", fileName)) {
+			GenericIO.writelnString("The operation of opening for appending the file" + fileName + " failed!");
+			System.exit(1);
+		}
+		
+		log.writelnString();
+		log.writelnString("Airlift sum up:");
+		int i = 1;
+		while(!this.finalStatistics_passengers.isEmpty())
+		{
+			try {
+				log.writeString("Flight " + i + " transported " + this.finalStatistics_passengers.read() + " passengers");
+			} catch (MemException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			if(this.finalStatistics_passengers.isEmpty())
+			{
+				log.writeString(".");
+			}
+			else
+			{
+				log.writelnString();
+			}
+			i += 1;
+		}
+		
+		
+		if(!log.close()) {
+			GenericIO.writelnString("The operation of closing the file " + fileName + " failed");
+			System.exit(1);
+		}
+	}
 	public synchronized void reportStatus(String condition)
 	{
 		TextFile log = new TextFile();

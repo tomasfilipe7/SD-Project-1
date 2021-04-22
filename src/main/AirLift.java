@@ -108,6 +108,7 @@ public class AirLift {
 		}catch(InterruptedException e) {}
 		GenericIO.writelnString("The pilot has terminated.");
 		GenericIO.writelnString();
+		repos.writeStatistics();
 	}
 
 }

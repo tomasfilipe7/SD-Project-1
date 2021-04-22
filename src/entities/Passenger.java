@@ -88,28 +88,21 @@ public class Passenger extends Thread
 					depAirport.waitInQueue();		// The passenger arrives at the queue and starts waiting.
 					break;
 				case IN_QUEUE:
-					try {
-						sleep((long)(1 + 50 * Math.random()));
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
 					depAirport.showDocuments();
-					GenericIO.writelnString("Documents Validated");
 					depAirport.boardThePlane();
-					try {
-						plane.enterPassenger();
-					} catch (MemException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+//					try {
+//						plane.enterPassenger();
+//					} catch (MemException e) {
+//						// TODO Auto-generated catch block
+//						e.printStackTrace();
+//					}
 					break;
 				case IN_FLIGHT:
 					plane.waitForEndOfFlight();					// Passenger waits until the end of flight, and leaves the plane
 					plane.leaveThePlane();
 					break;
 				case AT_DESTINATION:
-					this.destAirport.passengerArrived();
+//					this.destAirport.passengerArrived();
 					this.has_arrived_at_destination = true;			// End of passenger's life cycle.
 					break;
 			}
@@ -157,7 +150,6 @@ public class Passenger extends Thread
 	 * @param documents_validated
 	 */
 	public void setDocuments_validated(boolean documents_validated) {
-		GenericIO.writelnString("Documents validated setter: " + documents_validated);
 		this.documents_validated = documents_validated;
 	}
 	public boolean getDocuments_validated()
@@ -180,5 +172,14 @@ public class Passenger extends Thread
 	public void setShowing_documents(boolean showing_documents) {
 		this.showing_documents = showing_documents;
 	}
+
+	public DestAirport getDestAirport() {
+		return destAirport;
+	}
+
+	public Plane getPlane() {
+		return plane;
+	}
+	
 	
 }

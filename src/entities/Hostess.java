@@ -69,9 +69,17 @@ public class Hostess extends Thread
 					depAirport.prepareForPassBoarding();
 					break;
 				case WAIT_FOR_PASSENGER:
-					if(plane.isFull() || (depAirport.QueueIsEmpty() && plane.isReady()))
+					GenericIO.writelnString("Hostess: 'Passengers on plane: + " + depAirport.getPassengers_admitted() +  ".'");
+					GenericIO.writelnString("#################################");
+					GenericIO.writelnString("IsEmpty: " + depAirport.QueueIsEmpty() );
+					GenericIO.writelnString("Num: " + depAirport.getNpassengersQueue() );
+					GenericIO.writelnString("Num 2!!: " + depAirport.getPassengers_left_on_queue() );
+					GenericIO.writelnString("Admitted: " + depAirport.getPassengers_admitted());
+					GenericIO.writelnString("On Plane: " + plane.getCurrentPassengers());
+					GenericIO.writelnString("#################################");
+					if(depAirport.getPassengers_admitted() >= plane.getMax_passengers() || (depAirport.getPassengers_left_on_queue() <= 0 && depAirport.getPassengers_admitted() >= plane.getMin_passengers()) || (depAirport.getPassengersLeft() == 0 && depAirport.QueueIsEmpty()))
 					{
-						GenericIO.writelnString("Plane full");
+						GenericIO.writelnString("Hostess: 'All set, lets inform the plane.'");
 						depAirport.informPlaneReadyToTakeOff();
 					}
 					else if(!plane.isFull() && !depAirport.QueueIsEmpty())

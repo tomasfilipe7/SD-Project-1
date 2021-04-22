@@ -27,6 +27,7 @@ public class DestAirport
 		this.repos = repos;
 		passengers = new Passenger[SimulParams.P];
 		this.pass_arrived = 0;
+		this.repos.setInPTAL(this.pass_arrived);
 	}
 	
 	public synchronized void passengerArrived()
@@ -36,13 +37,13 @@ public class DestAirport
 	}
 	public synchronized void announceArrival()
 	{
-		GenericIO.writelnString("Announce Arrival");
+		GenericIO.writelnString("Pilot - 'We are announcing that we arrived at the destination!'");
 		Pilot p = (Pilot)Thread.currentThread();
 		repos.reportStatus(" arrived.");
 		p.setPilotState(EPilotState.DEBOARDING);
 		repos.setPilotState(EPilotState.DEBOARDING);
 		p.getPlane().setHas_arrived(true);
-		notifyAll();
+		
 	}
 	
 }

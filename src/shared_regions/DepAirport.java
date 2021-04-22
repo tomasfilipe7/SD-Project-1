@@ -18,9 +18,12 @@ import entities.Hostess;
  */
 public class DepAirport 
 {
+	private int passengers_left;
 	private MemFIFO<Passenger> passengersQueue;
 	private int npassengersQueue;
 	private GeneralRepos repos;
+	private int passengers_admitted;
+	private int passengers_left_on_queue;
 	
 	/**
 	 * Hostess waiting to check documents;
@@ -40,13 +43,38 @@ public class DepAirport
 		this.plane_has_arrived = false;
 		this.ready_to_takeoff = false;
 		this.npassengersQueue = 0;
+		this.passengers_left = passengersQueueMax;
+		this.passengers_admitted = 0;
+		this.passengers_left_on_queue = 0;
+		
 	}
 	
+	
+	public int getPassengersLeft() {
+		return passengers_left;
+	}
+	
+
+	public int getNpassengersQueue() {
+		return npassengersQueue;
+	}
+
+
 	public boolean QueueIsEmpty()
 	{
 		return passengersQueue.isEmpty();
 	}
 	
+	public int getPassengers_admitted() {
+		return passengers_admitted;
+	}
+
+
+	public int getPassengers_left_on_queue() {
+		return passengers_left_on_queue;
+	}
+
+
 	public synchronized void waitInQueue()
 	{
 		// Implement wait in queue
@@ -57,13 +85,13 @@ public class DepAirport
 			repos.setInQueue(this.npassengersQueue);
 		} catch (MemException e1) {
 			// TODO Auto-generated catch block
-			GenericIO.writelnString("Catching writing on queue");
 			e1.printStackTrace();
 		}
-		notifyAll();
 		p.setPassengerState(EPassengerState.IN_QUEUE);
 		repos.setPassengerState(p.getPassengerId(), EPassengerState.IN_QUEUE);
+		notifyAll();
 		
+		GenericIO.writelnString("Passenger " + p.getPassengerId() + " - 'I will wait in queue until Im called.'");
 		while(!p.isTo_be_called())
 		{
 			try {
@@ -71,17 +99,17 @@ public class DepAirport
 				
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
-				GenericIO.writelnString("Catching waiting for call");
 				e.printStackTrace();
 			}
 		}
+		GenericIO.writelnString("Passenger " + p.getPassengerId() + "' - My turn to show my documents.'");
 	}
 	
 	public synchronized void showDocuments()
 	{
 		// Implement show documents
-		GenericIO.writelnString("What is happening?");
 		Passenger p = (Passenger)Thread.currentThread();
+		GenericIO.writelnString("Passenger " + p.getPassengerId() + " - 'Im going to show my documents and wait.'");
 		notifyAll();
 		while(!p.getDocuments_validated())
 		{
@@ -89,11 +117,10 @@ public class DepAirport
 				wait();
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
-				GenericIO.writelnString("Catching error getting documents validated");
 				e.printStackTrace();
 			}
 		}
-		GenericIO.writelnString("Show documents after wait");
+		GenericIO.writelnString("Passenger " + p.getPassengerId() + " - *Showed documents and waited.*");
 		
 	}
 	
@@ -101,8 +128,14 @@ public class DepAirport
 	{
 		// Implement travel to airport
 		Passenger p = (Passenger)Thread.currentThread();
-		this.npassengersQueue -= 1;
-		repos.setInQueue(this.npassengersQueue);
+		GenericIO.writelnString("Passenger " + p.getPassengerId() + " - 'Im leaving the airport and boarding the plane.'");
+		try {
+			p.getPlane().enterPassenger();
+		} catch (MemException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		this.passengers_left -= 1;
 		p.setPassengerState(EPassengerState.IN_FLIGHT);
 		repos.setPassengerState(p.getPassengerId(), EPassengerState.IN_FLIGHT);
 //		try {
@@ -116,6 +149,7 @@ public class DepAirport
 
 	public synchronized void parkAtTransferGate()
 	{
+		GenericIO.writelnString("Pilot - 'Im parking the plane.");
 		Pilot p = (Pilot)Thread.currentThread();
 		try {
 			Pilot.sleep((long)(1 + 10 * Math.random()));
@@ -129,6 +163,7 @@ public class DepAirport
 	
 	public synchronized void informPlaneReadyForBoarding()
 	{
+		GenericIO.writelnString("Pilot - 'Hostess, you can start checking passengers.");
 		Pilot p = (Pilot)Thread.currentThread();
 		repos.reportStatus("boarding started.");
 		p.setPilotState(EPilotState.READY_FOR_BOARDING);
@@ -141,6 +176,7 @@ public class DepAirport
 	public synchronized void waitForAllBoard()
 	{
 		Pilot p = (Pilot)Thread.currentThread();
+		GenericIO.writelnString("Pilot - 'Im waiting for everyone aboard.");
 		p.setPilotState(EPilotState.WAITING_FOR_BOARDING);
 		repos.setPilotState(EPilotState.WAITING_FOR_BOARDING);
 		while(!this.ready_to_takeoff)
@@ -151,8 +187,10 @@ public class DepAirport
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			GenericIO.writelnString("Pilot - 'YEEEEYY!!!!!!!!!!!!!!!!.");
 		}
 		this.ready_to_takeoff = false;
+		GenericIO.writelnString("Pilot - 'AHH HOYYY EVERYONE ON BOARD!!!!!!!!!!!!!!!!.");
 	}
 	
 	public synchronized void prepareForPassBoarding()
@@ -167,6 +205,7 @@ public class DepAirport
 				e.printStackTrace();
 			}
 		}
+		GenericIO.writelnString("Hostess - 'Alright, Pilot. Ill wait for passengers to come.");
 		h.setHostessState(EHostessState.WAIT_FOR_PASSENGER);
 		repos.setHostessState(EHostessState.WAIT_FOR_PASSENGER);
 	}
@@ -191,8 +230,12 @@ public class DepAirport
 		repos.reportStatus("passenger " + p.getPassengerId() + " checked.");
 		h.setHostessState(EHostessState.CHECK_PASSENGER);	
 		repos.setHostessState(EHostessState.CHECK_PASSENGER);
-		GenericIO.writelnString("Sir, your documents are valid.");
+		GenericIO.writelnString("Hostess: - Sir " + p.getPassengerId() + ", your documents are valid.");
 		p.setDocuments_validated(true);
+		this.npassengersQueue -= 1;
+		this.passengers_left_on_queue = this.npassengersQueue;
+		repos.setInQueue(this.npassengersQueue);
+		this.passengers_admitted += 1;
 //		notifyAll();
 		
 	}
@@ -203,7 +246,8 @@ public class DepAirport
 		h.setHostessState(EHostessState.WAIT_FOR_PASSENGER);
 		repos.setHostessState(EHostessState.WAIT_FOR_PASSENGER);
 		notifyAll();
-		while(this.QueueIsEmpty())
+		GenericIO.writelnString("Hostess: - Next passenger please.");
+		while(this.QueueIsEmpty() && this.passengers_left > 0)
 		{
 			try {
 				wait();
@@ -212,15 +256,18 @@ public class DepAirport
 				GenericIO.writelnString("Catching error waiting for next passenger");
 				e.printStackTrace();
 			}
+			GenericIO.writelnString("Hostess - Preso aqui");
 		}
+		GenericIO.writelnString("Hostess - Saiu daqui");
 	}
 	
 	public synchronized void informPlaneReadyToTakeOff()
 	{
-		GenericIO.writelnString("Plane, you can go now");
+		GenericIO.writelnString("Hostess - 'Pilot, everything is ready.'");
+		this.ready_to_takeoff = true;
 		notifyAll();
 		this.plane_has_arrived = false;
-		this.ready_to_takeoff = true;
+		this.passengers_admitted = 0;
 		Hostess h = (Hostess)Thread.currentThread();
 		h.setHostessState(EHostessState.READY_TO_FLY);
 		repos.setHostessState(EHostessState.READY_TO_FLY);
@@ -228,6 +275,7 @@ public class DepAirport
 	
 	public synchronized void waitForNextFlight()
 	{
+		GenericIO.writelnString("Hostess - 'And now I will wait for the next flight.'");
 		Hostess h = (Hostess)Thread.currentThread();
 		h.setHostessState(EHostessState.WAIT_FOR_FLIGHT);
 		repos.setHostessState(EHostessState.WAIT_FOR_FLIGHT);
