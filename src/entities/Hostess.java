@@ -63,12 +63,12 @@ public class Hostess extends Thread
 	 */
 	public void run()	
 	{
-		while(!has_finished)																	// Condition to check the end of hostess life cycle
+		while(!has_finished)																	// Condition to check the end of Hostess life cycle
 		{
 			switch(hostessState)																// Check hosstess State
 			{
 				case WAIT_FOR_FLIGHT:															// State: Waiting for next flight
-					if(plane.isIs_comming_back() && depAirport.jobDone())						// If the plane has returned and there are no passangers left, the hostess ends her life cycle
+					if(depAirport.jobDone())						// If there are no passangers left, the hostess ends her life cycle
 					{
 						has_finished = true;
 						break;

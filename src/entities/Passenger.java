@@ -47,18 +47,18 @@ public class Passenger extends Thread
 	private boolean documents_validated;
 	
 	/**
-	 * Condition
+	 * Condition to check if the passenger was called by the hostess
 	 */
 	private boolean to_be_called;
-	private boolean showing_documents;
-	
 	
 	/**
-	 * @param state
-	 * @param depAirport
-	 * @param destAirport
-	 * @param plane
-	 * @param has_arrived
+	 * Passenger instantiation
+	 * 
+	 * @param passengerId 
+	 * @param passengerState
+	 * @param depAirport reference to dep airport
+	 * @param destAirport reference to dest airport
+	 * @param plane reference to plane
 	 */
 	public Passenger(int passengerId, EPassengerState passengerState, DepAirport depAirport, DestAirport destAirport, Plane plane) {
 		super();
@@ -67,11 +67,9 @@ public class Passenger extends Thread
 		this.depAirport = depAirport;
 		this.destAirport = destAirport;
 		this.plane = plane;
-//		this.has_arrived_at_airport = false;
 		this.has_arrived_at_destination = false;
 		this.documents_validated = false;
 		this.to_be_called = false;
-		this.showing_documents = false;
 	}
 
 	/**
@@ -80,30 +78,23 @@ public class Passenger extends Thread
 	@Override
 	public void run()
 	{
-		while(!has_arrived_at_destination)
+		while(!has_arrived_at_destination)							// Condition to check the end of Passenger life cycle
 		{
-			switch(passengerState)
+			switch(passengerState)									// Check passenger state
 			{
-				case GOING_TO_AIRPORT:
+				case GOING_TO_AIRPORT:								// State: Going to airport
 					travelToAirport();								// The passenger travels to the airport.
-					depAirport.waitInQueue();		// The passenger arrives at the queue and starts waiting.
+					depAirport.waitInQueue();						// The passenger arrives at the queue and starts waiting.
 					break;
-				case IN_QUEUE:
-					depAirport.showDocuments();
-					depAirport.boardThePlane();
-//					try {
-//						plane.enterPassenger();
-//					} catch (MemException e) {
-//						// TODO Auto-generated catch block
-//						e.printStackTrace();
-//					}
+				case IN_QUEUE:										// State: In Queue
+					depAirport.showDocuments();						// The passenger shows his documents to the hostess
+					depAirport.boardThePlane();						// Having his documents validated, the passenger will then board the plane
 					break;
-				case IN_FLIGHT:
-					plane.waitForEndOfFlight();					// Passenger waits until the end of flight, and leaves the plane
+				case IN_FLIGHT:										// State: In Flight
+					plane.waitForEndOfFlight();						// Passenger waits until the end of flight, and leaves the plane
 					plane.leaveThePlane();
 					break;
-				case AT_DESTINATION:
-//					this.destAirport.passengerArrived();
+				case AT_DESTINATION:								// State: At Destination
 					this.has_arrived_at_destination = true;			// End of passenger's life cycle.
 					break;
 			}
@@ -153,31 +144,44 @@ public class Passenger extends Thread
 	public void setDocuments_validated(boolean documents_validated) {
 		this.documents_validated = documents_validated;
 	}
+	
+	/**
+	 * Getter of the documents_validated
+	 * @return documents_validated
+	 */
 	public boolean getDocuments_validated()
 	{
 		return this.documents_validated;
 	}
 	
+	/**
+	 * Getter of to_bo_called
+	 * @return to_be_called
+	 */
 	public boolean isTo_be_called() {
 		return to_be_called;
 	}
 
+	/**
+	 * Setter of to_be_called
+	 * @param to_be_called
+	 */
 	public void setTo_be_called(boolean to_be_called) {
 		this.to_be_called = to_be_called;
 	}
 
-	public boolean isShowing_documents() {
-		return showing_documents;
-	}
-
-	public void setShowing_documents(boolean showing_documents) {
-		this.showing_documents = showing_documents;
-	}
-
+	/**
+	 * Getter of DestAirport
+	 * @return destAirport
+	 */
 	public DestAirport getDestAirport() {
 		return destAirport;
 	}
 
+	/**
+	 * Getter of plane
+	 * @return plane
+	 */
 	public Plane getPlane() {
 		return plane;
 	}
