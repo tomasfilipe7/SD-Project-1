@@ -235,7 +235,6 @@ public class Plane
 	
 	public synchronized void waitForEndOfFlight()
 	{
-		Passenger p = (Passenger) Thread.currentThread();
 		// Implement wait for end of flight
 		while(!this.has_arrived)
 		{

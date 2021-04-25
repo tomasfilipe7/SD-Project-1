@@ -4,8 +4,6 @@
 package entities;
 
 import common_infrastructures.EPassengerState;
-import common_infrastructures.MemException;
-import genclass.GenericIO;
 import shared_regions.DepAirport;
 import shared_regions.DestAirport;
 import shared_regions.Plane;

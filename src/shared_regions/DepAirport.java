@@ -9,7 +9,6 @@ import common_infrastructures.MemException;
 import common_infrastructures.MemFIFO;
 import entities.Passenger;
 import entities.Pilot;
-import genclass.GenericIO;
 import entities.Hostess;
 
 /**

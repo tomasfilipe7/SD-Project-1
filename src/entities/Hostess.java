@@ -3,13 +3,9 @@
  */
 package entities;
 
-import java.lang.Thread.State;
-
 import common_infrastructures.EHostessState;
 import common_infrastructures.MemException;
-import genclass.GenericIO;
 import shared_regions.DepAirport;
-import shared_regions.DestAirport;
 import shared_regions.Plane;
 
 /**

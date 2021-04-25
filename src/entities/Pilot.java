@@ -4,7 +4,6 @@
 package entities;
 
 import common_infrastructures.EPilotState;
-import genclass.GenericIO;
 import shared_regions.DepAirport;
 import shared_regions.DestAirport;
 import shared_regions.Plane;
@@ -17,27 +16,27 @@ import shared_regions.Plane;
  */
 public class Pilot extends Thread
 {
-	/*
+	/**
 	 * Current state of the pilot
 	 */
 	private EPilotState pilotState;
 	
-	/*
+	/**
 	 * Reference to the department airport
 	 */
 	private final DepAirport depAirport;
 	
-	/*
+	/**
 	 * Reference to the destination airport
 	 */
 	private final DestAirport destAirport;
 	
-	/*
+	/**
 	 * Reference to the plane
 	 */
 	private final Plane plane;
 	
-	/*
+	/**
 	 * Condition to check if the life cycle of the pilot has finished
 	 */
 	private boolean has_finished;
@@ -89,7 +88,6 @@ public class Pilot extends Thread
 					break;
 				case FLYING_BACK:														// State: Flying Back
 					depAirport.parkAtTransferGate();									// Park the plane at the transfer gate
-					plane.setIs_comming_back(true);										// Signaling the
 					break;
 			}
 		}
