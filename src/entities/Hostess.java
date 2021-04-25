@@ -4,6 +4,7 @@
 package entities;
 
 import common_infrastructures.MemException;
+import genclass.GenericIO;
 import shared_regions.DepAirport;
 import shared_regions.Plane;
 
@@ -60,10 +61,10 @@ public class Hostess extends Thread
 	{
 		while(!has_finished)																	// Condition to check the end of Hostess life cycle
 		{
-			switch(hostessState)																// Check hosstess State
+			switch(hostessState)																// Check hostess State
 			{
 				case WAIT_FOR_FLIGHT:															// State: Waiting for next flight
-					if(depAirport.jobDone())						// If there are no passangers left, the hostess ends her life cycle
+					if(depAirport.jobDone())													// If there are no passengers left, the hostess ends her life cycle
 					{
 						has_finished = true;
 						break;
@@ -72,11 +73,14 @@ public class Hostess extends Thread
 					break;
 				case WAIT_FOR_PASSENGER:														// State: Wait for passenger
 																								// Check if plane is ready to depart to destination.(If plane is full, or plane is at minimum capacity and airport queue is empty or there's left then minimum capacity left)
-					if(depAirport.getPassengers_admitted() >= plane.getMax_passengers() || (depAirport.getPassengers_left_on_queue() <= 0 && depAirport.getPassengers_admitted() >= plane.getMin_passengers()) || (depAirport.getPassengersLeft() == 0 && depAirport.QueueIsEmpty()))
+					if(plane.isFull() || (depAirport.getPassengers_left_on_queue() <= 0 && depAirport.getPassengers_admitted() >= plane.getMin_passengers()) || (depAirport.getPassengersLeft() == 0 && depAirport.QueueIsEmpty()))
 					{
+						if(depAirport.getPassengers_admitted() >= plane.getMax_passengers()) GenericIO.writelnString("Max passengers");
+						if(depAirport.getPassengers_left_on_queue() <= 0 && depAirport.getPassengers_admitted() >= plane.getMin_passengers()) GenericIO.writelnString("Minimum passengers");
+						if(depAirport.getPassengersLeft() == 0 && depAirport.QueueIsEmpty()) GenericIO.writelnString("Passengers Left");
 						depAirport.informPlaneReadyToTakeOff();									// Inform pilot that the plane is ready to take off
 					}
-					else if(!plane.isFull() && !depAirport.QueueIsEmpty())						// If there are still passengers in queue and the plane is not full
+					else if(!(depAirport.getPassengers_admitted() >= plane.getMax_passengers()) && !depAirport.QueueIsEmpty())						// If there are still passengers in queue and the plane is not full
 					{
 						try {
 							depAirport.checkDocuments();										// Check if the documents of the passenger at the start of the queue are valid 

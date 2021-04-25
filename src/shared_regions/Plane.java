@@ -8,6 +8,7 @@ import entities.EPassengerState;
 import entities.EPilotState;
 import entities.Passenger;
 import entities.Pilot;
+import genclass.GenericIO;
 
 /**
  * @author tomasfilipe7
@@ -123,6 +124,8 @@ public class Plane
 	
 	public boolean isFull()
 	{
+		GenericIO.writelnString("Current passengers: " + this.currentPassengers);
+		GenericIO.writelnString("Max passengers: " + this.max_passengers);
 		return currentPassengers >= max_passengers;
 	}
 	
