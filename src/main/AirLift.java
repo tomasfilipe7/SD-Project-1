@@ -4,8 +4,6 @@
 package main;
 
 import shared_regions.*;
-import common_infrastructures.EHostessState;
-import common_infrastructures.EPassengerState;
 import common_infrastructures.EPilotState;
 import entities.*;
 import genclass.FileOp;

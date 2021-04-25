@@ -3,6 +3,8 @@ package shared_regions;
 import java.util.Objects;
 
 import common_infrastructures.*;
+import entities.EHostessState;
+import entities.EPassengerState;
 import main.*;
 import genclass.GenericIO;
 import genclass.TextFile;

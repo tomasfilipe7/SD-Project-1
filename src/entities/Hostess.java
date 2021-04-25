@@ -3,7 +3,6 @@
  */
 package entities;
 
-import common_infrastructures.EHostessState;
 import common_infrastructures.MemException;
 import shared_regions.DepAirport;
 import shared_regions.Plane;

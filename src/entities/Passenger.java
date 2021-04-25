@@ -3,7 +3,6 @@
  */
 package entities;
 
-import common_infrastructures.EPassengerState;
 import shared_regions.DepAirport;
 import shared_regions.DestAirport;
 import shared_regions.Plane;
