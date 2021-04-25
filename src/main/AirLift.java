@@ -4,7 +4,6 @@
 package main;
 
 import shared_regions.*;
-import common_infrastructures.EPilotState;
 import entities.*;
 import genclass.FileOp;
 import genclass.GenericIO;

@@ -5,6 +5,7 @@ import java.util.Objects;
 import common_infrastructures.*;
 import entities.EHostessState;
 import entities.EPassengerState;
+import entities.EPilotState;
 import main.*;
 import genclass.GenericIO;
 import genclass.TextFile;

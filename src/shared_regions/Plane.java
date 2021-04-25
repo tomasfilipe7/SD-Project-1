@@ -3,9 +3,9 @@
  */
 package shared_regions;
 
-import common_infrastructures.EPilotState;
 import common_infrastructures.MemException;
 import entities.EPassengerState;
+import entities.EPilotState;
 import entities.Passenger;
 import entities.Pilot;
 

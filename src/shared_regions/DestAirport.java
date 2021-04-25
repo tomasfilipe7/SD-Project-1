@@ -3,7 +3,7 @@
  */
 package shared_regions;
 
-import common_infrastructures.EPilotState;
+import entities.EPilotState;
 import entities.Pilot;
 
 /**
