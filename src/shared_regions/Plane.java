@@ -30,6 +30,7 @@ public class Plane
 	/**
 	 * @param max_passengers
 	 * @param min_passengers
+	 * @param repos
 	 */
 	public Plane(int min_passengers, int max_passengers, GeneralRepos repos) {
 		super();
@@ -84,6 +85,11 @@ public class Plane
 	{
 		return currentPassengers >= min_passengers;
 	}
+	
+	/**
+	 * Check if plane is empty
+	 * @return true if the number of current passengers equal to zero
+	 */
 	
 	public boolean isEmpty()
 	{

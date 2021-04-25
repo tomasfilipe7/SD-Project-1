@@ -14,6 +14,12 @@ import genclass.TextFile;
  *
  */
 
+/**
+ * General Repository.
+ * 
+ * Responsible to keep the visible internal state of the problem and to provide means for it to be printed in the logging file.
+ * */
+
 public class GeneralRepos {
 	
 	/**
@@ -44,10 +50,9 @@ public class GeneralRepos {
 	
 	
 	/**
-	 * Instatiation of a general repository object
+	 * Instantiation of a general repository object
 	 * 
 	 * @param fileName name of the logging file
-	 * @param nIter
 	 */
 	
 	public GeneralRepos(String fileName) {
@@ -103,31 +108,71 @@ public class GeneralRepos {
 		reportStatus();
 	}
 	
+	/**
+	 * Set flight number.
+	 * 
+	 *  @param flightNum flight number
+	 */
+	
 	public void setFlightNum(int flightNum) {
 		this.flightNum = flightNum;
 	}
-
+	
+	/**
+	 * Set in queue.
+	 * 
+	 *  @param inQueue in queue
+	 */
 	
 	public void setInQueue(int inQueue) {
 		this.inQueue = inQueue;
 	}
+	
+	/**
+	 * Set in flight.
+	 * 
+	 *  @param inFlight in flight
+	 */
 
 	public void setInFlight(int inFlight) {
 		this.inFlight = inFlight;
 	}
+	
+	/**
+	 * Set in ...
+	 * 
+	 *  @param inPTAL in 
+	 */
 
 	public void setInPTAL(int inPTAL) {
 		this.inPTAL = inPTAL;
 	}
 	
+	/**
+	 * Get in queue.
+	 * 
+	 *  @return in queue
+	 */
 	
 	public int getInQueue() {
 		return inQueue;
 	}
+	
+	/**
+	 * Get in 
+	 * 
+	 * @return in PTAL
+	 */
 
 	public int getInPTAL() {
 		return inPTAL;
 	}
+	
+	/**
+	 * Get flight number
+	 * 
+	 *  @return flight number
+	 */
 
 	public int getFlightNum() {
 		return flightNum;
@@ -136,7 +181,11 @@ public class GeneralRepos {
 	/**
 	 * Write the header to the logging file.
 	 * 
-	 *  */
+	 * The pilot is at the transfer gate, the hostess is waiting for the next flight and the passengers are going to the airport.
+	 * Internal operation.
+	 * 
+	 */
+	
 	private void reportInitialStatus() {
 		TextFile log = new TextFile();				// Instantiation of a text file handler
 		
@@ -156,6 +205,11 @@ public class GeneralRepos {
 		log.writelnString();
 	}
 	
+	/**
+	 * Update passengers statistics.
+	 * 
+	 */
+	
 	public synchronized void updateStatistics(int num_passengers)
 	{
 		try {
@@ -165,6 +219,13 @@ public class GeneralRepos {
 			e.printStackTrace();
 		}
 	}
+	
+	/**
+	 * Write final statistics at the end of the logging file.
+	 * 
+	 * Airlift sum up with all the flights and how many each passengers each of them transported.
+	 * 
+	 */
 	
 	public synchronized void writeStatistics()
 	{
@@ -202,6 +263,11 @@ public class GeneralRepos {
 			System.exit(1);
 		}
 	}
+	
+	/**
+	 * Write different flight conditions at the logging file during the simulation. 
+	 */
+	
 	public synchronized void reportStatus(String condition)
 	{
 		TextFile log = new TextFile();
@@ -224,7 +290,12 @@ public class GeneralRepos {
 	
 	
 	/**
-	 * Write a state line at the end of the logging file. */
+	 * Write a state line at the end of the logging file. 
+	 * 
+	 * The current state of the pilot, hostess and passengers is organized in a line to be printed, 
+	 * as well as the number of passengers presently forming a queue to board the plane,
+	 * the number of passengers in the plane
+	 * and the number of passengers that have already arrived at their destination. */
 	
 	private void reportStatus() {
 		TextFile log = new TextFile();			// Instantiation of a text file handler
