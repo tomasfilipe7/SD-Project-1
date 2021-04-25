@@ -4,6 +4,7 @@
 package common_infrastructures;
 /**
  * @author tomasfilipe7
+ * @author marciapires
  *
  */
 public enum EPilotState 

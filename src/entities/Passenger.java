@@ -12,6 +12,7 @@ import shared_regions.Plane;
 
 /**
  * @author tomasfilipe7
+ * @author marciapires
  *
  */
 public class Passenger extends Thread
@@ -117,7 +118,7 @@ public class Passenger extends Thread
 	{
 		// Implement travel to airport
 		try {
-			sleep((long)(1 + 50 * Math.random()));
+			sleep((long)(1 + 80 * Math.random()));
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

@@ -14,6 +14,7 @@ import entities.Hostess;
 
 /**
  * @author tomasfilipe7
+ * @author marciapires
  *
  */
 public class DepAirport 

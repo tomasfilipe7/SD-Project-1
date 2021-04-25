@@ -5,6 +5,7 @@ package common_infrastructures;
 
 /**
  * @author tomasfilipe7
+ * @author marciapires
  *
  */
 public abstract class MemObject<R> 

@@ -12,6 +12,7 @@ import main.SimulParams;
 
 /**
  * @author tomasfilipe7
+ * @author marciapires
  *
  */
 public class DestAirport 

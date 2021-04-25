@@ -13,6 +13,7 @@ import genclass.GenericIO;
 
 /**
  * @author tomasfilipe7
+ * @author marciapires
  *
  */
 public class Plane 

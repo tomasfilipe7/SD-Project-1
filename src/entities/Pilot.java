@@ -12,6 +12,7 @@ import shared_regions.Plane;
 
 /**
  * @author tomasfilipe7
+ * @author marciapires
  *
  */
 public class Pilot extends Thread

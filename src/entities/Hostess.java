@@ -14,6 +14,7 @@ import shared_regions.Plane;
 
 /**
  * @author tomasfilipe7
+ * @author marciapires
  *
  */
 public class Hostess extends Thread

@@ -4,9 +4,6 @@
 package main;
 
 import shared_regions.*;
-
-import java.io.IOException;
-
 import common_infrastructures.EHostessState;
 import common_infrastructures.EPassengerState;
 import common_infrastructures.EPilotState;
@@ -16,6 +13,7 @@ import genclass.GenericIO;
 
 /**
  * @author tomasfilipe7
+ * @author marciapires
  *
  */
 public class AirLift {
@@ -34,7 +32,6 @@ public class AirLift {
 		Hostess hostess;								// reference to the hostess
 		Pilot pilot;									// reference to the pilot
 		
-		int nIter;										// number of iterations of the passenger
 		String fileName;								// logging file name
 		char op;										// selected option
 		boolean success;								// end of operation flag

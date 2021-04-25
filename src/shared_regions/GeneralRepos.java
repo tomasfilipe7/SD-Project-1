@@ -8,6 +8,12 @@ import entities.*;
 import genclass.GenericIO;
 import genclass.TextFile;
 
+/**
+ * @author tomasfilipe7
+ * @author marciapires
+ *
+ */
+
 public class GeneralRepos {
 	
 	/**
@@ -138,7 +144,7 @@ public class GeneralRepos {
 			GenericIO.writelnString("The operation of creating the file " + fileName + " failed!");
 			System.exit(1);
 		}
-		log.writelnString("             Airlift");
+		log.writelnString("             Airlift - Description of the internal state");
 		log.writelnString("PT    HT    P00   P01   P02   P03   P04   P05   P06   P07   P08   P09   P10   P11   P12   P13   P14   P15   P16   P17   P18   P19   P20   InQ   InF   PTAL");
 		
 		if(!log.close()) {
