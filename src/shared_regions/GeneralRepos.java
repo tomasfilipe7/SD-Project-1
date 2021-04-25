@@ -4,7 +4,6 @@ import java.util.Objects;
 
 import common_infrastructures.*;
 import main.*;
-import entities.*;
 import genclass.GenericIO;
 import genclass.TextFile;
 
@@ -109,7 +108,7 @@ public class GeneralRepos {
 	}
 	
 	/**
-	 * Set flight number.
+	 * Set number of flights.
 	 * 
 	 *  @param flightNum flight number
 	 */
@@ -119,7 +118,7 @@ public class GeneralRepos {
 	}
 	
 	/**
-	 * Set in queue.
+	 * Set number of passengers in queue.
 	 * 
 	 *  @param inQueue in queue
 	 */
@@ -129,7 +128,7 @@ public class GeneralRepos {
 	}
 	
 	/**
-	 * Set in flight.
+	 * Set number of passengers in flight.
 	 * 
 	 *  @param inFlight in flight
 	 */
@@ -139,9 +138,9 @@ public class GeneralRepos {
 	}
 	
 	/**
-	 * Set in ...
+	 * Set number of passengers at destination.
 	 * 
-	 *  @param inPTAL in 
+	 *  @param inPTAL passengers at destination
 	 */
 
 	public void setInPTAL(int inPTAL) {
@@ -149,7 +148,7 @@ public class GeneralRepos {
 	}
 	
 	/**
-	 * Get in queue.
+	 * Get number of passengers in queue.
 	 * 
 	 *  @return in queue
 	 */
@@ -159,7 +158,7 @@ public class GeneralRepos {
 	}
 	
 	/**
-	 * Get in 
+	 * Get number of passengers at destination 
 	 * 
 	 * @return in PTAL
 	 */
@@ -169,7 +168,7 @@ public class GeneralRepos {
 	}
 	
 	/**
-	 * Get flight number
+	 * Get number of flights
 	 * 
 	 *  @return flight number
 	 */

@@ -6,10 +6,8 @@ package shared_regions;
 import common_infrastructures.EPassengerState;
 import common_infrastructures.EPilotState;
 import common_infrastructures.MemException;
-import common_infrastructures.MemFIFO;
 import entities.Passenger;
 import entities.Pilot;
-import genclass.GenericIO;
 
 /**
  * @author tomasfilipe7
@@ -17,19 +15,52 @@ import genclass.GenericIO;
  *
  */
 public class Plane 
-{
+{	
+	/**
+	 * Maximum number of passengers on the plane
+	 */
+	
 	private int max_passengers;
-	private int min_passengers;
-	private Passenger[] passengers_on_plane;
-	private int currentPassengers;
-	private boolean has_arrived;
-	private GeneralRepos repos;
-	private int flightNum;
-	private boolean is_comming_back;
 	
 	/**
-	 * @param max_passengers
+	 * Minimum number of passengers on the plane
+	 */
+	
+	private int min_passengers;
+	
+	/**
+	 *  Number of passengers inside the plane
+	 */
+	
+	private Passenger[] passengers_on_plane;
+	
+	/**
+	 * Number of current passengers in the plane 
+	 */
+	
+	private int currentPassengers;
+	
+	/**
+	 * Condition to verify if the plane has arrived
+	 */
+	
+	private boolean has_arrived;
+	
+	/**
+	 * Reference to the general repository 
+	 */
+	
+	private GeneralRepos repos;
+	
+	/**
+	 * Number of flights 
+	 */
+	
+	private int flightNum;
+	
+	/**
 	 * @param min_passengers
+	 * @param max_passengers
 	 * @param repos
 	 */
 	public Plane(int min_passengers, int max_passengers, GeneralRepos repos) {
@@ -40,30 +71,45 @@ public class Plane
 		passengers_on_plane = new Passenger[max_passengers];
 		this.repos = repos;
 		this.has_arrived = false;
-		this.is_comming_back = false;
 		this.flightNum = 1;
 	}
+	
+	/**
+	 * Set if plane has arrived.
+	 * 
+	 *  @param has_arrived has arrived
+	 */
 	
 	public void setHas_arrived(boolean has_arrived) {
 		this.has_arrived = has_arrived;
 	}
-
-	public boolean isIs_comming_back() {
-		return is_comming_back;
-	}
-
-	public void setIs_comming_back(boolean is_comming_back) {
-		this.is_comming_back = is_comming_back;
-	}
 	
+	
+	/**
+	 * Get maximum number of passengers.
+	 * 
+	 * @return max number of passengers 
+	 */
 	
 	public int getMax_passengers() {
 		return max_passengers;
 	}
-
+	
+	/**
+	 * Get minimum number of passengers.
+	 * 
+	 * @return min number of passengers 
+	 */
+	
 	public int getMin_passengers() {
 		return min_passengers;
 	}
+	
+	/**
+	 * Get current number of passengers.
+	 * 
+	 * @return current number of passengers
+	 */
 
 	public int getCurrentPassengers() {
 		return currentPassengers;
@@ -71,16 +117,21 @@ public class Plane
 
 	/**
 	 * Check if plane is full
-	 * @return true if the number of current passengers is greater or equal then max passengers
+	 * 
+	 * @return true if the number of current passengers is greater or equal than maximum passengers
 	 */
+	
 	public boolean isFull()
 	{
 		return currentPassengers >= max_passengers;
 	}
+	
 	/**
 	 * Check if plane is ready to depart
-	 * @return true if the number of current passengers is greater or equal then minimum passengers
+	 * 
+	 * @return true if the number of current passengers is greater or equal than minimum passengers
 	 */
+	
 	public boolean isReady()
 	{
 		return currentPassengers >= min_passengers;
@@ -88,13 +139,21 @@ public class Plane
 	
 	/**
 	 * Check if plane is empty
-	 * @return true if the number of current passengers equal to zero
+	 * 
+	 * @return true if the number of current passengers is equal to zero
 	 */
 	
 	public boolean isEmpty()
 	{
 		return currentPassengers == 0;
 	}
+	
+	/**
+	 * Passenger enters the plane 
+	 * 
+	 * It is called by a passenger when he boards the plane.
+	 * 
+	 */
 	
 	public synchronized void enterPassenger() throws MemException
 	{
@@ -109,12 +168,17 @@ public class Plane
 		}
 		this.currentPassengers += 1;
 		repos.setInFlight(this.currentPassengers);
-		GenericIO.writelnString("Current passengers: " + this.currentPassengers);
 	}
+	
+	/**
+	 * Operation fly to destination point
+	 * 
+	 * It is called by the pilot when he starts flying to destination point.
+	 * 
+	 */
 	
 	public synchronized void flyToDestinationPoint()
 	{
-		GenericIO.writelnString("Pilot - The plane taking off ladies and gentleman.");
 		Pilot p = (Pilot)Thread.currentThread();
 		repos.reportStatus("departed with " + this.currentPassengers + " passengers.");
 		repos.updateStatistics(this.currentPassengers);
@@ -128,6 +192,13 @@ public class Plane
 		}
 	}
 	
+	/**
+	 * Operation fly to departure point
+	 * 
+	 * It is called by the pilot when he starts flying to the departure point.
+	 * 
+	 */
+	
 	public synchronized void flyToDeparturePoint()
 	{
 		notifyAll();
@@ -139,8 +210,7 @@ public class Plane
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		}	
-		GenericIO.writelnString("Pilot - 'Lets head back home.'");
+		}
 		Pilot p = (Pilot)Thread.currentThread();
 		repos.reportStatus(" returning.");
 		p.setPilotState(EPilotState.FLYING_BACK);
@@ -156,29 +226,39 @@ public class Plane
 		this.has_arrived = false;
 	}
 	
+	/**
+	 * Operation waiting for end of flight
+	 * 
+	 * It is called by the passenger while he is in the plane waiting for the end of flight.
+	 * 
+	 */
+	
 	public synchronized void waitForEndOfFlight()
 	{
 		Passenger p = (Passenger) Thread.currentThread();
 		// Implement wait for end of flight
 		while(!this.has_arrived)
 		{
-			GenericIO.writelnString("Passenger " + p.getPassengerId() + " - 'Has the plane arrived yet?: " + this.has_arrived + "'");
 			try {
 				wait();
 			} catch (InterruptedException e) {
-				GenericIO.writelnString("*ERROR DURING FLIGHT*");
 				// TODO Auto-generated catch block
 			}
-			GenericIO.writelnString("Passenger " + p.getPassengerId() + " - 'Has the plane arrived yet?: " + this.has_arrived + "'");
 		}
-		GenericIO.writelnString("Passenger " + p.getPassengerId() + " - 'Thank god, the flight ended'.");
 	}
+	
+	
+	/**
+	 * Operation leave the plane
+	 * 
+	 * It is called by the passenger when the plane arrives.
+	 * 
+	 */
 	
 	public synchronized void leaveThePlane()
 	{
 		// Implement leave the plane
 		Passenger p = (Passenger) Thread.currentThread();
-		GenericIO.writelnString("Passenger " + p.getPassengerId() + " - 'Im leaving the plane'");
 		try {
 			Passenger.sleep((long)(1 + 10 * Math.random()));
 		} catch (InterruptedException e) {
@@ -200,11 +280,8 @@ public class Plane
 		p.getDestAirport().passengerArrived();
 		p.setPassengerState(EPassengerState.AT_DESTINATION);
 		repos.setPassengerState(p.getPassengerId(), EPassengerState.AT_DESTINATION);
-		GenericIO.writelnString("Passenger "+ p.getPassengerId() + " - 'I left the plane.'");
-		GenericIO.writelnString("DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD");
 		if(currentPassengers <= 0)
 		{
-			GenericIO.writelnString("Leaving");
 			notifyAll();
 		}
 	}

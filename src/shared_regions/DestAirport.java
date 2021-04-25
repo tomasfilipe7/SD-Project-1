@@ -3,12 +3,8 @@
  */
 package shared_regions;
 
-import common_infrastructures.EPassengerState;
 import common_infrastructures.EPilotState;
-import entities.Passenger;
 import entities.Pilot;
-import genclass.GenericIO;
-import main.SimulParams;
 
 /**
  * @author tomasfilipe7
@@ -17,28 +13,50 @@ import main.SimulParams;
  */
 public class DestAirport 
 {
-	private GeneralRepos repos;
-	private Passenger[] passengers;
-	private int pass_arrived;
 	/**
-	 * @param repos
+	 * Reference to the general repository.
 	 */
+	
+	private GeneralRepos repos;
+	
+	/**
+	 * Number of passengers that have arrived. 
+	 */
+	
+	private int pass_arrived;
+	
+	/**
+	 * @param repos reference to the general repository.
+	 */
+	
 	public DestAirport(GeneralRepos repos) {
 		super();
 		this.repos = repos;
-		passengers = new Passenger[SimulParams.P];
 		this.pass_arrived = 0;
 		this.repos.setInPTAL(this.pass_arrived);
 	}
 	
+	
+	/**
+	 * 
+	 *  It is called when a passenger is arriving at the destination airport.
+	 *  
+	 */
 	public synchronized void passengerArrived()
 	{
 		this.pass_arrived += 1;
 		this.repos.setInPTAL(this.pass_arrived);
 	}
+	
+	/**
+	 * Operation announce arrival.
+	 * 
+	 * It is called by the pilot when they arrive at the destination airport. 
+	 * 
+	 */
+	
 	public synchronized void announceArrival()
 	{
-		GenericIO.writelnString("Pilot - 'We are announcing that we arrived at the destination!'");
 		Pilot p = (Pilot)Thread.currentThread();
 		repos.reportStatus(" arrived.");
 		p.setPilotState(EPilotState.DEBOARDING);
