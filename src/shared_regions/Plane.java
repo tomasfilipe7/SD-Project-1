@@ -30,7 +30,7 @@ public class Plane
 	private int min_passengers;
 	
 	/**
-	 *  Number of passengers inside the plane
+	 *  Passengers inside the plane
 	 */
 	
 	private Passenger[] passengers_on_plane;
@@ -124,8 +124,6 @@ public class Plane
 	
 	public boolean isFull()
 	{
-		GenericIO.writelnString("Current passengers: " + this.currentPassengers);
-		GenericIO.writelnString("Max passengers: " + this.max_passengers);
 		return currentPassengers >= max_passengers;
 	}
 	
@@ -198,7 +196,7 @@ public class Plane
 	/**
 	 * Operation fly to departure point
 	 * 
-	 * It is called by the pilot when he starts flying to the departure point.
+	 * It is called by the pilot when he starts flying to the departure point. The pilot will wait until all passengers are out of the plane, to then proceed to fly back.
 	 * 
 	 */
 	
@@ -253,7 +251,7 @@ public class Plane
 	/**
 	 * Operation leave the plane
 	 * 
-	 * It is called by the passenger when the plane arrives.
+	 * It is called by the passenger when the plane arrives. The last passenger will then notify the pilot that the plane is now empty
 	 * 
 	 */
 	

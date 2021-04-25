@@ -75,9 +75,6 @@ public class Hostess extends Thread
 																								// Check if plane is ready to depart to destination.(If plane is full, or plane is at minimum capacity and airport queue is empty or there's left then minimum capacity left)
 					if(plane.isFull() || (depAirport.getPassengers_left_on_queue() <= 0 && depAirport.getPassengers_admitted() >= plane.getMin_passengers()) || (depAirport.getPassengersLeft() == 0 && depAirport.QueueIsEmpty()))
 					{
-						if(depAirport.getPassengers_admitted() >= plane.getMax_passengers()) GenericIO.writelnString("Max passengers");
-						if(depAirport.getPassengers_left_on_queue() <= 0 && depAirport.getPassengers_admitted() >= plane.getMin_passengers()) GenericIO.writelnString("Minimum passengers");
-						if(depAirport.getPassengersLeft() == 0 && depAirport.QueueIsEmpty()) GenericIO.writelnString("Passengers Left");
 						depAirport.informPlaneReadyToTakeOff();									// Inform pilot that the plane is ready to take off
 					}
 					else if(!(depAirport.getPassengers_admitted() >= plane.getMax_passengers()) && !depAirport.QueueIsEmpty())						// If there are still passengers in queue and the plane is not full
