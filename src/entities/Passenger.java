@@ -47,7 +47,7 @@ public class Passenger extends Thread
 	private boolean documents_validated;
 	
 	/**
-	 * 
+	 * Condition
 	 */
 	private boolean to_be_called;
 	private boolean showing_documents;
@@ -118,7 +118,7 @@ public class Passenger extends Thread
 	{
 		// Implement travel to airport
 		try {
-			sleep((long)(1 + 80 * Math.random()));
+			sleep((long)(1 + 50 * Math.random()));
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

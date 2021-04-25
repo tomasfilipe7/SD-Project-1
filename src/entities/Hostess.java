@@ -13,6 +13,7 @@ import shared_regions.DestAirport;
 import shared_regions.Plane;
 
 /**
+ * 
  * @author tomasfilipe7
  * @author marciapires
  *
@@ -41,9 +42,11 @@ public class Hostess extends Thread
 	
 
 	/**
-	 * @param state
-	 * @param depAirport
-	 * @param plane
+	 * Hostess instantiation
+	 * 
+	 * @param state reference to hostess state
+	 * @param depAirport reference to department airport
+	 * @param plane reference to the plane
 	 */
 	public Hostess(EHostessState hostessState, DepAirport depAirport, Plane plane) {
 		super();
@@ -55,49 +58,44 @@ public class Hostess extends Thread
 
 
 	@Override
-	public void run()
+	/**
+	 * Hostess life cycle
+	 */
+	public void run()	
 	{
-		while(!has_finished)
+		while(!has_finished)																	// Condition to check the end of hostess life cycle
 		{
-			switch(hostessState)
+			switch(hostessState)																// Check hosstess State
 			{
-				case WAIT_FOR_FLIGHT:
-					if(plane.isIs_comming_back() && depAirport.QueueIsEmpty())
+				case WAIT_FOR_FLIGHT:															// State: Waiting for next flight
+					if(plane.isIs_comming_back() && depAirport.jobDone())						// If the plane has returned and there are no passangers left, the hostess ends her life cycle
 					{
 						has_finished = true;
 						break;
 					}
-					depAirport.prepareForPassBoarding();
+					depAirport.prepareForPassBoarding();										// Waiting for pilot to notify her
 					break;
-				case WAIT_FOR_PASSENGER:
-					GenericIO.writelnString("Hostess: 'Passengers on plane: + " + depAirport.getPassengers_admitted() +  ".'");
-					GenericIO.writelnString("#################################");
-					GenericIO.writelnString("IsEmpty: " + depAirport.QueueIsEmpty() );
-					GenericIO.writelnString("Num: " + depAirport.getNpassengersQueue() );
-					GenericIO.writelnString("Num 2!!: " + depAirport.getPassengers_left_on_queue() );
-					GenericIO.writelnString("Admitted: " + depAirport.getPassengers_admitted());
-					GenericIO.writelnString("On Plane: " + plane.getCurrentPassengers());
-					GenericIO.writelnString("#################################");
+				case WAIT_FOR_PASSENGER:														// State: Wait for passenger
+																								// Check if plane is ready to depart to destination.(If plane is full, or plane is at minimum capacity and airport queue is empty or there's left then minimum capacity left)
 					if(depAirport.getPassengers_admitted() >= plane.getMax_passengers() || (depAirport.getPassengers_left_on_queue() <= 0 && depAirport.getPassengers_admitted() >= plane.getMin_passengers()) || (depAirport.getPassengersLeft() == 0 && depAirport.QueueIsEmpty()))
 					{
-						GenericIO.writelnString("Hostess: 'All set, lets inform the plane.'");
-						depAirport.informPlaneReadyToTakeOff();
+						depAirport.informPlaneReadyToTakeOff();									// Inform pilot that the plane is ready to take off
 					}
-					else if(!plane.isFull() && !depAirport.QueueIsEmpty())
+					else if(!plane.isFull() && !depAirport.QueueIsEmpty())						// If there are still passengers in queue and the plane is not full
 					{
 						try {
-							depAirport.checkDocuments();
+							depAirport.checkDocuments();										// Check if the documents of the passenger at the start of the queue are valid 
 						} catch (MemException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
 					}
 					break;
-				case CHECK_PASSENGER:
-					depAirport.waitForNextPassenger();
+				case CHECK_PASSENGER:															// State: Check Passenger
+					depAirport.waitForNextPassenger();											// Wait for the next passenger on the Queue
 					break;
-				case READY_TO_FLY:
-					depAirport.waitForNextFlight();
+				case READY_TO_FLY:																// State: Ready to Fly
+					depAirport.waitForNextFlight();												// Wait for the next flight to arrive
 					break;
 			}
 		}
