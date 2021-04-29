@@ -8,13 +8,17 @@ import entities.EPassengerState;
 import entities.EPilotState;
 import entities.Passenger;
 import entities.Pilot;
-import genclass.GenericIO;
 
 /**
  * @author tomasfilipe7
  * @author marciapires
  *
  */
+
+/**
+ * Plane class
+ * 
+ * */
 public class Plane 
 {	
 	/**
@@ -60,6 +64,10 @@ public class Plane
 	private int flightNum;
 	
 	/**
+	 * 
+	 * Plane constructor
+	 * 
+	 * 
 	 * @param min_passengers
 	 * @param max_passengers
 	 * @param repos

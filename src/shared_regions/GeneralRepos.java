@@ -71,7 +71,12 @@ public class GeneralRepos {
 		for(int i = 0; i < SimulParams.P; i++) {
 			passengerState[i] = EPassengerState.GOING_TO_AIRPORT;
 		}
-		this.finalStatistics_passengers = new MemFIFO<Integer>(SimulParams.P);
+		try {
+			this.finalStatistics_passengers = new MemFIFO<Integer>(SimulParams.P);
+		} catch (MemException e) {
+			GenericIO.writelnString ("Instantiation of waiting FIFO failed: " + e.getMessage ());
+	        System.exit (1);
+		}
 		reportInitialStatus();
 		
 	}
@@ -217,8 +222,8 @@ public class GeneralRepos {
 		try {
 			this.finalStatistics_passengers.write(num_passengers);
 		} catch (MemException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			GenericIO.writelnString ("Insertion of number of passengers in waiting FIFO failed: " + e.getMessage ());
+	        System.exit (1);
 		}
 	}
 	
@@ -245,8 +250,8 @@ public class GeneralRepos {
 			try {
 				log.writeString("Flight " + i + " transported " + this.finalStatistics_passengers.read() + " passengers");
 			} catch (MemException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				GenericIO.writelnString ("Retrieval of number of passengers in waiting FIFO failed: " + e.getMessage ());
+		        System.exit (1);
 			}
 			if(this.finalStatistics_passengers.isEmpty())
 			{

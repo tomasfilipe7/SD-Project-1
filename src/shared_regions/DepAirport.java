@@ -6,6 +6,7 @@ import common_infrastructures.MemException;
 import common_infrastructures.MemFIFO;
 import entities.Passenger;
 import entities.Pilot;
+import genclass.GenericIO;
 import entities.EHostessState;
 import entities.EPassengerState;
 import entities.EPilotState;
@@ -16,6 +17,12 @@ import entities.Hostess;
  * @author marciapires
  *
  */
+
+/**
+ * 
+ * Departure Airport class
+ * 
+ * */
 public class DepAirport 
 {
 	/**
@@ -53,14 +60,19 @@ public class DepAirport
 	private boolean plane_has_arrived;
 
 	/**
-	 * Department Airport instantiation
+	 * Departure Airport instantiation
 	 * 
 	 * @param passengersQueueMax reference to the total of passengers
 	 * @param repos reference to the General Repository
 	 */
 	public DepAirport(int passengersQueueMax, GeneralRepos repos) {
 		super();
-		this.passengersQueue = new MemFIFO<Passenger>(passengersQueueMax);
+		try {
+			this.passengersQueue = new MemFIFO<Passenger>(passengersQueueMax);
+		} catch (MemException e) {
+			GenericIO.writelnString ("Instantiation of waiting FIFO failed: " + e.getMessage ());
+	        System.exit (1);
+		}
 		this.repos = repos;
 		this.plane_has_arrived = false;
 		this.ready_to_takeoff = false;
@@ -112,6 +124,11 @@ public class DepAirport
 		return passengers_left_on_queue;
 	}
 	
+	/**
+	 * 
+	 * Condition if there are no passengers left
+	 * 
+	 * */
 	public boolean jobDone()
 	{
 		return this.passengers_left == 0;
@@ -129,12 +146,12 @@ public class DepAirport
 		Passenger p = (Passenger)Thread.currentThread();
 		try {
 			passengersQueue.write(p);
-			this.npassengersQueue += 1;
-			repos.setInQueue(this.npassengersQueue);
 		} catch (MemException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			GenericIO.writelnString ("Insertion of passenger in waiting FIFO failed: " + e1.getMessage ());
+	        System.exit(1);
 		}
+		this.npassengersQueue += 1;
+		repos.setInQueue(this.npassengersQueue);
 		p.setPassengerState(EPassengerState.IN_QUEUE);
 		repos.setPassengerState(p.getPassengerId(), EPassengerState.IN_QUEUE);
 		notifyAll();

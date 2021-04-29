@@ -6,7 +6,7 @@ public class MemFIFO<R> extends MemObject<R>
 				outPnt =0;
 	private boolean empty = true;
 	
-	public MemFIFO(int nElem) {
+	public MemFIFO(int nElem) throws MemException{
 		super(nElem);
 	}
 	

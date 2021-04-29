@@ -12,6 +12,12 @@ import shared_regions.Plane;
  * @author marciapires
  *
  */
+
+/**
+ * 
+ * Passenger class
+ * 
+ * */
 public class Passenger extends Thread
 {
 	/**

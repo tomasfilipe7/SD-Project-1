@@ -13,7 +13,8 @@ public abstract class MemObject<R>
 	protected R[] mem;
 	protected int nMax;
 	
-	protected MemObject(int nElem) {
+	@SuppressWarnings("unchecked")
+	protected MemObject(int nElem) throws MemException{
 		mem = (R[]) new Object[nElem];
 		nMax = nElem;
 	}

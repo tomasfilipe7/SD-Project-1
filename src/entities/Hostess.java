@@ -14,6 +14,12 @@ import shared_regions.Plane;
  * @author marciapires
  *
  */
+
+/**
+ * 
+ * Hostess class
+ * 
+ * */
 public class Hostess extends Thread
 {	
 	/**
@@ -40,8 +46,8 @@ public class Hostess extends Thread
 	/**
 	 * Hostess instantiation
 	 * 
-	 * @param state reference to hostess state
-	 * @param depAirport reference to department airport
+	 * @param hostessState reference to hostess state
+	 * @param depAirport reference to departure airport
 	 * @param plane reference to the plane
 	 */
 	public Hostess(EHostessState hostessState, DepAirport depAirport, Plane plane) {
@@ -82,8 +88,8 @@ public class Hostess extends Thread
 						try {
 							depAirport.checkDocuments();										// Check if the documents of the passenger at the start of the queue are valid 
 						} catch (MemException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
+							GenericIO.writelnString ("Retrieval of passenger from waiting FIFO failed: " + e.getMessage ());
+					        System.exit (1);
 						}
 					}
 					break;
