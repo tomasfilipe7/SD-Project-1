@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<project default="javadoc">
-    <target name="javadoc">
-        <javadoc access="public" additionalparam="--module-path &quot;/home/marciapires/Transferências/genclass.jar&quot; " author="true" classpath="/home/marciapires/Transferências/genclass.jar" destdir="doc" doctitle="SD" nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false" packagenames="common_infrastructures,shared_regions,main,entities" source="11" sourcefiles="src/module-info.java" sourcepath="src" splitindex="true" use="true" version="true"/>
-    </target>
-</project>
