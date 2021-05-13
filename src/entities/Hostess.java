@@ -14,12 +14,6 @@ import shared_regions.Plane;
  * @author marciapires
  *
  */
-
-/**
- * 
- * Hostess class
- * 
- * */
 public class Hostess extends Thread
 {	
 	/**
@@ -46,8 +40,8 @@ public class Hostess extends Thread
 	/**
 	 * Hostess instantiation
 	 * 
-	 * @param hostessState reference to hostess state
-	 * @param depAirport reference to departure airport
+	 * @param state reference to hostess state
+	 * @param depAirport reference to department airport
 	 * @param plane reference to the plane
 	 */
 	public Hostess(EHostessState hostessState, DepAirport depAirport, Plane plane) {
@@ -78,18 +72,29 @@ public class Hostess extends Thread
 					depAirport.prepareForPassBoarding();										// Waiting for pilot to notify her
 					break;
 				case WAIT_FOR_PASSENGER:														// State: Wait for passenger
-																								// Check if plane is ready to depart to destination.(If plane is full, or plane is at minimum capacity and airport queue is empty or there's left then minimum capacity left)
-					if(plane.isFull() || (depAirport.getPassengers_left_on_queue() <= 0 && depAirport.getPassengers_admitted() >= plane.getMin_passengers()) || (depAirport.getPassengersLeft() == 0 && depAirport.QueueIsEmpty()))
+//					GenericIO.writelnString("Waiting for Passenger");																			// Check if plane is ready to depart to destination.(If plane is full, or plane is at minimum capacity and airport queue is empty or there's left then minimum capacity left)
+//					GenericIO.writelnString(Boolean.toString(plane.isFull()));
+//					GenericIO.writelnString(Boolean.toString((depAirport.getPassengers_left_on_queue() <= 0 && depAirport.getPassengers_admitted() >= plane.getMin_passengers())));
+//					GenericIO.writelnString(Boolean.toString((depAirport.getPassengersLeft() == 0)));
+//					GenericIO.writelnString("Why not checking?");
+//					GenericIO.writelnString(Boolean.toString((depAirport.getPassengers_admitted() < plane.getMax_passengers())));
+//					GenericIO.writelnString(Boolean.toString((!depAirport.QueueIsEmpty() )));
+//					GenericIO.writelnString(Boolean.toString((depAirport.getPassengersLeft() != 0)));
+//					GenericIO.writelnString(Integer.toString((depAirport.getPassengers_admitted())));
+//					GenericIO.writelnString(Integer.toString((plane.getCurrentPassengers())));
+					if(plane.isFull() || (depAirport.getPassengers_left_on_queue() <= 0 && depAirport.getPassengers_admitted() >= plane.getMin_passengers()) || (depAirport.getPassengersLeft() == 0))
 					{
+						GenericIO.writelnString("Ready to take off GGGG");
 						depAirport.informPlaneReadyToTakeOff();									// Inform pilot that the plane is ready to take off
 					}
-					else if(!(depAirport.getPassengers_admitted() >= plane.getMax_passengers()) && !depAirport.QueueIsEmpty())						// If there are still passengers in queue and the plane is not full
+					else if(depAirport.getPassengers_admitted() < plane.getMax_passengers() && !depAirport.QueueIsEmpty() && depAirport.getPassengersLeft() != 0)						// If there are still passengers in queue and the plane is not full
 					{
+						GenericIO.writelnString("Enter here");
 						try {
 							depAirport.checkDocuments();										// Check if the documents of the passenger at the start of the queue are valid 
 						} catch (MemException e) {
-							GenericIO.writelnString ("Retrieval of passenger from waiting FIFO failed: " + e.getMessage ());
-					        System.exit (1);
+							// TODO Auto-generated catch block
+							e.printStackTrace();
 						}
 					}
 					break;

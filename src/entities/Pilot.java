@@ -13,11 +13,6 @@ import shared_regions.Plane;
  * @author marciapires
  *
  */
-
-/**
- * Pilot class
- * 
- * */
 public class Pilot extends Thread
 {
 	/**
@@ -26,7 +21,7 @@ public class Pilot extends Thread
 	private EPilotState pilotState;
 	
 	/**
-	 * Reference to the departure airport
+	 * Reference to the department airport
 	 */
 	private final DepAirport depAirport;
 	
@@ -46,8 +41,8 @@ public class Pilot extends Thread
 	private boolean has_finished;
 	
 	/**
-	 * @param pilotState
-	 * @param depAirport reference to departure airport
+	 * @param state
+	 * @param depAirport reference to department airport
 	 * @param destAirport reference to destination airport
 	 * @param plane reference to the plane
 	 */
@@ -85,10 +80,10 @@ public class Pilot extends Thread
 					plane.flyToDestinationPoint();										// Fly to destination airport
 					break;
 				case FLYING_FORWARD:													// State: Flying Forward
-					destAirport.announceArrival();										// Annouce to the passangers that the plane has arrived the destination
+					plane.announceArrival();										// Annouce to the passangers that the plane has arrived the destination
 					break;
 				case DEBOARDING:														// State: Deboarding
-					plane.flyToDeparturePoint();										// Fly back to the departure airport
+					plane.flyToDeparturePoint();										// Fly back to the department airport
 					break;
 				case FLYING_BACK:														// State: Flying Back
 					depAirport.parkAtTransferGate();									// Park the plane at the transfer gate

@@ -48,21 +48,4 @@ public class DestAirport
 		this.repos.setInPTAL(this.pass_arrived);
 	}
 	
-	/**
-	 * Operation announce arrival.
-	 * 
-	 * It is called by the pilot when they arrive at the destination airport. 
-	 * 
-	 */
-	
-	public synchronized void announceArrival()
-	{
-		Pilot p = (Pilot)Thread.currentThread();
-		repos.reportStatus(" arrived.");
-		p.setPilotState(EPilotState.DEBOARDING);
-		repos.setPilotState(EPilotState.DEBOARDING);
-		p.getPlane().setHas_arrived(true);
-		
-	}
-	
 }

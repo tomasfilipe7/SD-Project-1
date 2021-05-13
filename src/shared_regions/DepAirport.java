@@ -17,22 +17,25 @@ import entities.Hostess;
  * @author marciapires
  *
  */
-
-/**
- * 
- * Departure Airport class
- * 
- * */
 public class DepAirport 
 {
 	/**
 	 * Number of total passengers left to arrive at airport
 	 */
 	private int passengers_left;
+	
+	/**
+	 * Reference to passengers threads
+	 */
+	private Passenger[] passengers;
 	/**
 	 * Passengers Queue of airport
 	 */
-	private MemFIFO<Passenger> passengersQueue;
+	private MemFIFO<Integer> passengersQueue;
+	/**
+	 * ID of the passenger being checked;
+	 */
+	private int passengerBeingChecked;
 	/**
 	 * Number of passengers in Queue
 	 */
@@ -58,21 +61,21 @@ public class DepAirport
 	 * If the plane is at the airport
 	 */
 	private boolean plane_has_arrived;
+	/**
+	 * If the passenger is showing the documents to the hostess
+	 */
+	private boolean showingDocuments;
 
 	/**
-	 * Departure Airport instantiation
+	 * Department Airport instantiation
 	 * 
 	 * @param passengersQueueMax reference to the total of passengers
 	 * @param repos reference to the General Repository
 	 */
 	public DepAirport(int passengersQueueMax, GeneralRepos repos) {
 		super();
-		try {
-			this.passengersQueue = new MemFIFO<Passenger>(passengersQueueMax);
-		} catch (MemException e) {
-			GenericIO.writelnString ("Instantiation of waiting FIFO failed: " + e.getMessage ());
-	        System.exit (1);
-		}
+		this.passengersQueue = new MemFIFO<Integer>(passengersQueueMax);
+		this.passengers = new Passenger[passengersQueueMax];
 		this.repos = repos;
 		this.plane_has_arrived = false;
 		this.ready_to_takeoff = false;
@@ -80,6 +83,7 @@ public class DepAirport
 		this.passengers_left = passengersQueueMax;
 		this.passengers_admitted = 0;
 		this.passengers_left_on_queue = 0;
+		this.showingDocuments = false;
 		
 	}
 	
@@ -124,15 +128,11 @@ public class DepAirport
 		return passengers_left_on_queue;
 	}
 	
-	/**
-	 * 
-	 * Condition if there are no passengers left
-	 * 
-	 * */
 	public boolean jobDone()
 	{
 		return this.passengers_left == 0;
 	}
+	
 	/**
 	 * Operation wait in queue.
 	 * 
@@ -145,18 +145,19 @@ public class DepAirport
 		// Implement wait in queue
 		Passenger p = (Passenger)Thread.currentThread();
 		try {
-			passengersQueue.write(p);
+			passengersQueue.write(p.getPassengerId());
+			passengers[p.getPassengerId()] = p;
+			this.npassengersQueue += 1;
+			repos.setInQueue(this.npassengersQueue);
+			notifyAll();
 		} catch (MemException e1) {
-			GenericIO.writelnString ("Insertion of passenger in waiting FIFO failed: " + e1.getMessage ());
-	        System.exit(1);
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
 		}
-		this.npassengersQueue += 1;
-		repos.setInQueue(this.npassengersQueue);
 		p.setPassengerState(EPassengerState.IN_QUEUE);
 		repos.setPassengerState(p.getPassengerId(), EPassengerState.IN_QUEUE);
-		notifyAll();
-		
-		while(!p.isTo_be_called())
+
+		while(this.passengerBeingChecked != p.getPassengerId())
 		{
 			try {
 				wait();
@@ -177,9 +178,10 @@ public class DepAirport
 	public synchronized void showDocuments()
 	{
 		// Implement show documents
+		showingDocuments = true;
 		Passenger p = (Passenger)Thread.currentThread();
 		notifyAll();
-		while(!p.getDocuments_validated())
+		while(this.showingDocuments)
 		{
 			try {
 				wait();
@@ -206,7 +208,6 @@ public class DepAirport
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		this.passengers_left -= 1;
 		repos.setPassengerState(p.getPassengerId(), EPassengerState.IN_FLIGHT);
 		p.setPassengerState(EPassengerState.IN_FLIGHT);
 	}
@@ -300,12 +301,11 @@ public class DepAirport
 	public synchronized void checkDocuments() throws MemException
 	{
 		Hostess h = (Hostess)Thread.currentThread();
+		int p_id = passengersQueue.read();
+		this.passengerBeingChecked = p_id;
 		notifyAll();
 		
-		Passenger p;
-		p = passengersQueue.read();
-		p.setTo_be_called(true);		
-		while(p.getPassengerState() != EPassengerState.IN_QUEUE)
+		while(!this.showingDocuments)
 		{
 			try {
 				wait();
@@ -314,14 +314,18 @@ public class DepAirport
 				e.printStackTrace();
 			}
 		}
-		repos.reportStatus("passenger " + p.getPassengerId() + " checked.");
-		p.setDocuments_validated(true);
+		repos.reportStatus("passenger " + p_id + " checked.");
 		this.npassengersQueue -= 1;
 		this.passengers_left_on_queue = this.npassengersQueue;
+		this.passengers_left -= 1;
+		GenericIO.writelnString("Passengers: " + this.passengers_left_on_queue);
 		repos.setInQueue(this.npassengersQueue);
 		this.passengers_admitted += 1;
+		GenericIO.writelnString("Passenger admitted: " + p_id);
 		h.setHostessState(EHostessState.CHECK_PASSENGER);	
 		repos.setHostessState(EHostessState.CHECK_PASSENGER);
+		this.showingDocuments = false;
+		notifyAll();
 	}
 	
 	/**
@@ -335,9 +339,10 @@ public class DepAirport
 		Hostess h = (Hostess)Thread.currentThread();
 		h.setHostessState(EHostessState.WAIT_FOR_PASSENGER);
 		repos.setHostessState(EHostessState.WAIT_FOR_PASSENGER);
-		notifyAll();
+		
 		while(this.QueueIsEmpty() && this.passengers_left > 0)
 		{
+			GenericIO.writelnString("Stuck here?");
 			try {
 				wait();
 			} catch (InterruptedException e) {

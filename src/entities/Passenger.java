@@ -3,6 +3,7 @@
  */
 package entities;
 
+import genclass.GenericIO;
 import shared_regions.DepAirport;
 import shared_regions.DestAirport;
 import shared_regions.Plane;
@@ -12,12 +13,6 @@ import shared_regions.Plane;
  * @author marciapires
  *
  */
-
-/**
- * 
- * Passenger class
- * 
- * */
 public class Passenger extends Thread
 {
 	/**
@@ -44,16 +39,7 @@ public class Passenger extends Thread
 	 * Condition to verify the life cycle of the passenger
 	 */
 	private boolean has_arrived_at_destination;
-	/**
-	 * Condition to check if the passenger documents were validated
-	 */
-	private boolean documents_validated;
-	
-	/**
-	 * Condition to check if the passenger was called by the hostess
-	 */
-	private boolean to_be_called;
-	
+
 	/**
 	 * Passenger instantiation
 	 * 
@@ -71,8 +57,6 @@ public class Passenger extends Thread
 		this.destAirport = destAirport;
 		this.plane = plane;
 		this.has_arrived_at_destination = false;
-		this.documents_validated = false;
-		this.to_be_called = false;
 	}
 
 	/**
@@ -141,39 +125,6 @@ public class Passenger extends Thread
 		return passengerId;
 	}
 	/**
-	 * Set if the documents were validated
-	 * @param documents_validated
-	 */
-	public void setDocuments_validated(boolean documents_validated) {
-		this.documents_validated = documents_validated;
-	}
-	
-	/**
-	 * Getter of the documents_validated
-	 * @return documents_validated
-	 */
-	public boolean getDocuments_validated()
-	{
-		return this.documents_validated;
-	}
-	
-	/**
-	 * Getter of to_bo_called
-	 * @return to_be_called
-	 */
-	public boolean isTo_be_called() {
-		return to_be_called;
-	}
-
-	/**
-	 * Setter of to_be_called
-	 * @param to_be_called
-	 */
-	public void setTo_be_called(boolean to_be_called) {
-		this.to_be_called = to_be_called;
-	}
-
-	/**
 	 * Getter of DestAirport
 	 * @return destAirport
 	 */
@@ -188,6 +139,6 @@ public class Passenger extends Thread
 	public Plane getPlane() {
 		return plane;
 	}
-	
+
 	
 }

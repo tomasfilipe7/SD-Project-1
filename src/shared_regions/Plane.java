@@ -8,17 +8,14 @@ import entities.EPassengerState;
 import entities.EPilotState;
 import entities.Passenger;
 import entities.Pilot;
+import genclass.GenericIO;
+import main.SimulParams;
 
 /**
  * @author tomasfilipe7
  * @author marciapires
  *
  */
-
-/**
- * Plane class
- * 
- * */
 public class Plane 
 {	
 	/**
@@ -64,10 +61,6 @@ public class Plane
 	private int flightNum;
 	
 	/**
-	 * 
-	 * Plane constructor
-	 * 
-	 * 
 	 * @param min_passengers
 	 * @param max_passengers
 	 * @param repos
@@ -77,7 +70,7 @@ public class Plane
 		this.max_passengers = max_passengers;
 		this.min_passengers = min_passengers;
 		this.currentPassengers = 0;
-		passengers_on_plane = new Passenger[max_passengers];
+		passengers_on_plane = new Passenger[SimulParams.P];
 		this.repos = repos;
 		this.has_arrived = false;
 		this.flightNum = 1;
@@ -167,16 +160,10 @@ public class Plane
 	public synchronized void enterPassenger() throws MemException
 	{
 		Passenger passenger = (Passenger) Thread.currentThread();
-		for(int i = 0; i < this.passengers_on_plane.length; i++)
-		{
-			if(this.passengers_on_plane[i] == null)
-			{
-				this.passengers_on_plane[i] = passenger;
-				break;
-			}
-		}
+		this.passengers_on_plane[passenger.getPassengerId()] = passenger;
 		this.currentPassengers += 1;
 		repos.setInFlight(this.currentPassengers);
+		GenericIO.writelnString("Passenger entered: " + passenger.getPassengerId());
 	}
 	
 	/**
@@ -255,6 +242,22 @@ public class Plane
 		}
 	}
 	
+	/**
+	 * Operation announce arrival.
+	 * 
+	 * It is called by the pilot when they arrive at the destination airport. 
+	 * 
+	 */
+	
+	public synchronized void announceArrival()
+	{
+		Pilot p = (Pilot)Thread.currentThread();
+		repos.reportStatus(" arrived.");
+		p.setPilotState(EPilotState.DEBOARDING);
+		repos.setPilotState(EPilotState.DEBOARDING);
+		this.has_arrived = true;
+	}
+	
 	
 	/**
 	 * Operation leave the plane
@@ -273,14 +276,7 @@ public class Plane
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		for(int i = 0; i < this.passengers_on_plane.length; i++)
-		{
-			if(this.passengers_on_plane[i] != null && this.passengers_on_plane[i].getPassengerId() == p.getPassengerId())
-			{
-				this.passengers_on_plane[i] = null;
-				break;
-			}
-		}
+		this.passengers_on_plane[p.getPassengerId()] = null;
 		
 		currentPassengers -= 1;
 		this.repos.setInFlight(this.currentPassengers);

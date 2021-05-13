@@ -17,15 +17,10 @@ import genclass.GenericIO;
 /**
  * Airlift.
  * 
- * Main class
- * 
  * */
 public class AirLift {
 
 	/**
-	 * 
-	 * Main function
-	 * 
 	 * @param args
 	 */
 	

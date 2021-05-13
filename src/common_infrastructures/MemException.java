@@ -8,7 +8,6 @@ package common_infrastructures;
  * @author marciapires
  *
  */
-@SuppressWarnings("serial")
 public class MemException extends Exception
 {
 	public MemException(String errorMessage) {
